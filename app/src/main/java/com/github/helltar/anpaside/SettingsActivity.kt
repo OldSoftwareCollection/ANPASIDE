@@ -1,43 +1,50 @@
-package com.github.helltar.anpaside;
+package com.github.helltar.anpaside
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
+import android.app.Activity
+import android.os.Bundle
+import android.view.View
+import com.github.helltar.anpaside.databinding.ActivitySettingsBinding
 
-public class SettingsActivity extends Activity {
-
-    private EditText edtFontSize;
-    private CheckBox cbHighlighter;
-    private EditText edtGlobLibsPath;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-
-        edtFontSize = findViewById(R.id.edtEditorFontSize);
-        cbHighlighter = findViewById(R.id.cbHighlighter);
-        edtGlobLibsPath = findViewById(R.id.edtGlobalDirPath);
-
-        edtFontSize.setText("" + MainActivity.editor.editorConfig.getFontSize());
-        cbHighlighter.setChecked(MainActivity.editor.editorConfig.getHighlighterEnabled());
-        edtGlobLibsPath.setText(MainActivity.ideConfig.getGlobalDirPath());
-    }
-
-    public void onBtnSaveClick(View v) {
-        MainActivity.editor.setFontSize(Integer.parseInt(edtFontSize.getText().toString()));
-        MainActivity.editor.setHighlighterEnabled(cbHighlighter.isChecked());
-
-        String path = edtGlobLibsPath.getText().toString();
-
-        if (!path.endsWith("/")) {
-            path += "/";
+class SettingsActivity : Activity() {
+    private lateinit var binding: ActivitySettingsBinding
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // ViewBinding initialization
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        
+        with(binding) {
+            val view: View = root
+            setContentView(view)
+            
+            editEditorFontSize.setText(
+                MainActivity.editor.editorConfig.fontSize.toString()
+            )
+            toggleSyntaxHighlighting.isChecked = MainActivity.editor.editorConfig.highlighterEnabled
+            editGlobalLibsDirectoryPath.setText(MainActivity.ideConfig.globalDirPath)
+            
+            saveSettingsButton.setOnClickListener {
+                onSaveSettingsButtonClicked()
+            }
         }
-
-        MainActivity.ideConfig.setGlobalDirPath(path);
-
-        finish();
+    }
+    
+    private fun onSaveSettingsButtonClicked() {
+        with(binding) {
+            MainActivity.editor.setFontSize(
+                editEditorFontSize.text.toString().toInt()
+            )
+            MainActivity.editor.setHighlighterEnabled(toggleSyntaxHighlighting.isChecked)
+    
+            var path = editGlobalLibsDirectoryPath.text.toString()
+    
+            if (!path.endsWith("/")) {
+                path += "/"
+            }
+    
+            MainActivity.ideConfig.globalDirPath = path
+    
+            finish()
+        }
     }
 }
