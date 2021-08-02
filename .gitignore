@@ -1,1 +1,15 @@
-build/
+# directories
+# project directory
+.PVS-Studio
+.idea
+.gradle
+build
+
+# app module directory
+app/build
+
+# files
+*.iml
+*local.properties
+gradle/wrapper/gradle-wrapper.jar
+gradlew*
