@@ -1,5 +1,18 @@
 package com.github.helltar.anpaside;
 
+import static com.github.helltar.anpaside.Consts.ASSET_DIR_STUBS;
+import static com.github.helltar.anpaside.Consts.DATA_LIB_PATH;
+import static com.github.helltar.anpaside.Consts.DATA_PKG_PATH;
+import static com.github.helltar.anpaside.Consts.DIR_MAIN;
+import static com.github.helltar.anpaside.Consts.DIR_SRC;
+import static com.github.helltar.anpaside.Consts.EXT_PAS;
+import static com.github.helltar.anpaside.Consts.EXT_PROJ;
+import static com.github.helltar.anpaside.Consts.MP3CC;
+import static com.github.helltar.anpaside.Utils.fileExists;
+import static com.github.helltar.anpaside.Utils.getPathFromUri;
+import static com.github.helltar.anpaside.logging.Logger.LMT_ERROR;
+import static com.github.helltar.anpaside.logging.Logger.LMT_INFO;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,8 +24,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.Gravity;
@@ -25,23 +36,25 @@ import android.widget.ScrollView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.github.helltar.anpaside.editor.CodeEditor;
 import com.github.helltar.anpaside.ide.IdeConfig;
 import com.github.helltar.anpaside.ide.IdeInit;
 import com.github.helltar.anpaside.logging.Logger;
 import com.github.helltar.anpaside.project.ProjectBuilder;
 import com.github.helltar.anpaside.project.ProjectManager;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-
-import static com.github.helltar.anpaside.Consts.*;
-import static com.github.helltar.anpaside.logging.Logger.*;
-import static com.github.helltar.anpaside.Utils.*;
 
 public class MainActivity extends Activity {
 

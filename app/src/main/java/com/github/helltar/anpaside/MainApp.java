@@ -24,7 +24,7 @@ public class MainApp extends Application {
         return context;
     }
 
-    public static String getString(int resId) {
+    public static String receiveString(int resId) {
         return context.getString(resId);
     }
 }
