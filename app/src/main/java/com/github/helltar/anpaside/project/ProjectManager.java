@@ -1,14 +1,27 @@
 package com.github.helltar.anpaside.project;
 
-import com.github.helltar.anpaside.MainActivity;
-import com.github.helltar.anpaside.logging.Logger;
-import java.io.IOException;
-import org.apache.commons.io.FilenameUtils;
-
-import static com.github.helltar.anpaside.Consts.*;
-import static com.github.helltar.anpaside.Utils.*;
+import static com.github.helltar.anpaside.Consts.DATA_PKG_PATH;
+import static com.github.helltar.anpaside.Consts.DIR_BIN;
+import static com.github.helltar.anpaside.Consts.DIR_LIBS;
+import static com.github.helltar.anpaside.Consts.DIR_PREBUILD;
+import static com.github.helltar.anpaside.Consts.DIR_RES;
+import static com.github.helltar.anpaside.Consts.DIR_SRC;
+import static com.github.helltar.anpaside.Consts.TPL_GITIGNORE;
+import static com.github.helltar.anpaside.Consts.TPL_HELLOWORLD;
+import static com.github.helltar.anpaside.Consts.TPL_MODULE;
+import static com.github.helltar.anpaside.Utils.copyFileToDir;
+import static com.github.helltar.anpaside.Utils.createTextFile;
+import static com.github.helltar.anpaside.Utils.getFileNameOnly;
+import static com.github.helltar.anpaside.Utils.mkdir;
 
 import android.content.Context;
+
+import com.github.helltar.anpaside.R;
+import com.github.helltar.anpaside.logging.Logger;
+
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.IOException;
 
 public class ProjectManager extends ProjectConfig {
     protected Context context;
@@ -40,14 +53,21 @@ public class ProjectManager extends ProjectConfig {
 
     public boolean createProject(String path, String name) {
         projectPath = path + name + "/";
-        projectConfigFilename = projectPath + name + EXT_PROJ;
+        projectConfigFilename = projectPath + name + context.getString(R.string.extension_proj);
 
-        if (mkProjectDirs(projectPath)
-            && createConfigFile(projectConfigFilename, name)
-            && createHW(projectPath + DIR_SRC + name.toLowerCase() + EXT_PAS)) {
-            createGitIgnore(projectPath);
-            copyFileToDir(DATA_PKG_PATH + ASSET_DIR_FILES + "/icon.png", projectPath + DIR_RES);
-            return true;
+        if (
+            mkProjectDirs(projectPath)
+            && createConfigFile(
+                projectConfigFilename,
+                name
+            )
+            && createHW(projectPath + DIR_SRC + name.toLowerCase() + context.getString(R.string.extension_pas))) {
+                createGitIgnore(projectPath);
+                copyFileToDir(
+                    DATA_PKG_PATH + context.getString(R.string.assets_directory_files) + "/icon.png",
+                    projectPath + DIR_RES
+                );
+                return true;
         }
 
         return false;
@@ -59,7 +79,8 @@ public class ProjectManager extends ProjectConfig {
 
             projectPath = FilenameUtils.getFullPath(filename);
             projectConfigFilename = filename;
-            mainModuleFilename = projectPath + DIR_SRC + getMainModuleName() + EXT_PAS;
+            mainModuleFilename = projectPath + DIR_SRC + getMainModuleName()
+                + context.getString(R.string.extension_pas);
             projLibsDir = projectPath + DIR_LIBS;
 
             return true;

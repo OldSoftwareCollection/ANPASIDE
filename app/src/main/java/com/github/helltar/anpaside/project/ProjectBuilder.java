@@ -4,9 +4,6 @@ import static com.github.helltar.anpaside.Consts.DIR_BIN;
 import static com.github.helltar.anpaside.Consts.DIR_PREBUILD;
 import static com.github.helltar.anpaside.Consts.DIR_RES;
 import static com.github.helltar.anpaside.Consts.DIR_SRC;
-import static com.github.helltar.anpaside.Consts.EXT_CLASS;
-import static com.github.helltar.anpaside.Consts.EXT_JAR;
-import static com.github.helltar.anpaside.Consts.EXT_PAS;
 import static com.github.helltar.anpaside.Consts.LANG_ERR_FAILED_CREATE_ARCHIVE;
 import static com.github.helltar.anpaside.Consts.LANG_MSG_BUILD_SUCCESSFULLY;
 import static com.github.helltar.anpaside.Consts.TPL_MANIFEST;
@@ -87,14 +84,19 @@ public class ProjectBuilder extends ProjectManager {
 
         String output = compilerProc.output;
 
-        Matcher m = Pattern.compile("\\^0(.*?)\n").matcher(output);
+        Matcher matcher = Pattern.compile("\\^0(.*?)\n").matcher(output);
 
-        while (m.find()) {
-            String unitName = m.group(1);
-            String unitFilename = getProjectPath() + DIR_SRC + unitName + EXT_PAS;
+        while (matcher.find()) {
+            String unitName = matcher.group(1);
+            String unitFilename = getProjectPath() + DIR_SRC + unitName
+                + context.getString(R.string.extension_pas);
 
             if (fileExists(unitFilename, true)) {
-                if (!fileExists(projPrebuildDir + unitName + EXT_CLASS)) {
+                if (
+                    !fileExists(
+                        projPrebuildDir + unitName + context.getString(R.string.extension_class)
+                    )
+                ) {
                     if (compile(unitFilename)) {
                         continue;
                     } else {
@@ -134,10 +136,10 @@ public class ProjectBuilder extends ProjectManager {
     }
 
     private boolean findAndCopyLib(String output) {
-        Matcher m = Pattern.compile("\\^1(.*?)\n").matcher(output);
+        Matcher matcher = Pattern.compile("\\^1(.*?)\n").matcher(output);
 
-        while (m.find()) {
-            String libName = "Lib_" + m.group(1) + EXT_CLASS;
+        while (matcher.find()) {
+            String libName = "Lib_" + matcher.group(1) + context.getString(R.string.extension_class);
 
             // пробуем найти библиотеку в libs каталоге проекта
             if (!copyFileToDir(getProjLibsDir() + libName, projPrebuildDir, false)) {
@@ -169,12 +171,18 @@ public class ProjectBuilder extends ProjectManager {
         if (prebulid()
             && compile(getMainModuleFilename())
             && createZip(projPrebuildDir, jarFilename)
-            && addResToZip(getProjectPath() + DIR_RES, jarFilename)) {
-            Logger.addLog(LANG_MSG_BUILD_SUCCESSFULLY + "\n" 
-                          + DIR_BIN + getMidletName() + EXT_JAR + "\n"
-                          + getFileSize(jarFilename) + " KB", LMT_INFO);
-
-            return true;
+            && addResToZip(
+                getProjectPath() + DIR_RES,
+                jarFilename)
+            ) {
+                Logger.addLog(
+                    LANG_MSG_BUILD_SUCCESSFULLY + "\n" + DIR_BIN + getMidletName()
+                        + context.getString(R.string.extension_jar) + "\n" + getFileSize(jarFilename)
+                        + " KB",
+                    LMT_INFO
+                );
+    
+                return true;
         }
 
         return false;
@@ -207,7 +215,8 @@ public class ProjectBuilder extends ProjectManager {
     }
 
     public String getJarFilename() {
-        return getProjectPath() + DIR_BIN + getMidletName() + EXT_JAR;
+        return getProjectPath() + DIR_BIN + getMidletName()
+            + context.getString(R.string.extension_jar);
     }
 
     private String deleteCharacters(String output) {

@@ -1,12 +1,9 @@
 package com.github.helltar.anpaside;
 
-import static com.github.helltar.anpaside.Consts.ASSET_DIR_STUBS;
 import static com.github.helltar.anpaside.Consts.DATA_LIB_PATH;
 import static com.github.helltar.anpaside.Consts.DATA_PKG_PATH;
 import static com.github.helltar.anpaside.Consts.DIR_MAIN;
 import static com.github.helltar.anpaside.Consts.DIR_SRC;
-import static com.github.helltar.anpaside.Consts.EXT_PAS;
-import static com.github.helltar.anpaside.Consts.EXT_PROJ;
 import static com.github.helltar.anpaside.Utils.fileExists;
 import static com.github.helltar.anpaside.Utils.getPathFromUri;
 import static com.github.helltar.anpaside.logging.Logger.LMT_ERROR;
@@ -215,7 +212,8 @@ public class MainActivity extends Activity {
             return;
         }
 
-        final String filename = projectManager.getProjectPath() + DIR_SRC + moduleName + EXT_PAS;
+        final String filename = projectManager.getProjectPath() + DIR_SRC + moduleName
+            + getString(R.string.extension_pas);
 
         if (!fileExists(filename)) {
             if (projectManager.createModule(filename)) {
@@ -255,7 +253,11 @@ public class MainActivity extends Activity {
     }
 
     private boolean isProjectFile(String filename) {
-        return FilenameUtils.getExtension(filename).equals(EXT_PROJ.substring(1, EXT_PROJ.length()));
+        return FilenameUtils.getExtension(filename)
+            .equals(
+                getString(R.string.extension_proj)
+                    .substring(1)
+            );
     }
 
     private View getViewById(int resource) {
@@ -453,7 +455,7 @@ public class MainActivity extends Activity {
                         MainActivity.this,
                         projectManager.getProjectConfigFilename(),
                         DATA_LIB_PATH + getString(R.string.mp3cc),
-                        DATA_PKG_PATH + ASSET_DIR_STUBS + "/",
+                        DATA_PKG_PATH + getString(R.string.assets_directory_stubs) + "/",
                         ideConfig.getGlobalDirPath()
                     );
 
@@ -470,8 +472,13 @@ public class MainActivity extends Activity {
 
     private void installAssets() {
         Logger.addLog(getString(R.string.msg_install_start));
-
-        if (new IdeInit(MainApp.getContext().getAssets()).install()) {
+        if (
+            new IdeInit(
+                this,
+                MainApp.getContext()
+                    .getAssets()
+            ).install()
+        ) {
             ideConfig.setInstState(true);
             Logger.addLog(getString(R.string.msg_install_ok), LMT_INFO);
         }

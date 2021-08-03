@@ -5,9 +5,18 @@
     <string name="fw_class" translatable="false">FW.class</string>
     <string name="mp3cc" translatable="false">libmp3cc.so</string>
 
+    <string name="assets_directory_files" translatable="false">files</string>
+    <string name="assets_directory_stubs" translatable="false">stubs</string>
+
+    <string name="extension_proj" translatable="false">.aproj</string>
+    <string name="extension_pas" translatable="false">.pas</string>
+    <string name="extension_jar" translatable="false">.jar</string>
+    <string name="extension_class" translatable="false">.class</string>
+
+
     <!-- messages -->
 
-    <string name="msg.install_start">Installation of the compiler, wait...</string>
+    <string name="msg.install_start">Installation of the compiler, wait…</string>
     <string name="msg.install_ok">Installation completed</string>
     <string name="msg.saved">Saved</string>
     <string name="msg.no_open_project">No open project</string>

@@ -1,27 +1,39 @@
 package com.github.helltar.anpaside.ide;
 
+import static com.github.helltar.anpaside.Consts.DATA_PKG_PATH;
+
+import android.content.Context;
 import android.content.res.AssetManager;
-import com.github.helltar.anpaside.Utils;
+
+import com.github.helltar.anpaside.R;
 import com.github.helltar.anpaside.logging.Logger;
-import java.io.File;
-import java.io.IOException;
+
 import org.apache.commons.io.FileUtils;
 
-import static com.github.helltar.anpaside.Consts.*;
+import java.io.File;
+import java.io.IOException;
 
 public class IdeInit {
-
+    private Context context;
     private AssetManager assetManager;
 
-    public IdeInit(AssetManager assetManager) {
+    public IdeInit(
+        Context context,
+        AssetManager assetManager
+    ) {
+        this.context = context;
         this.assetManager = assetManager;
     }
 
     public boolean install() {
-        if (copyAssets(ASSET_DIR_STUBS)) {
-            if (copyAssets(ASSET_DIR_FILES)) {
-                return true;
-            }
+        if (
+            copyAssets(
+                context.getString(R.string.assets_directory_stubs)
+            )
+        ) {
+            return copyAssets(
+                context.getString(R.string.assets_directory_files)
+            );
         }
 
         return false;
