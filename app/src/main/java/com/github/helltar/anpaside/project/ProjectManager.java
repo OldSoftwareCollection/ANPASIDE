@@ -1,5 +1,6 @@
 package com.github.helltar.anpaside.project;
 
+import com.github.helltar.anpaside.MainActivity;
 import com.github.helltar.anpaside.logging.Logger;
 import java.io.IOException;
 import org.apache.commons.io.FilenameUtils;
@@ -7,13 +8,20 @@ import org.apache.commons.io.FilenameUtils;
 import static com.github.helltar.anpaside.Consts.*;
 import static com.github.helltar.anpaside.Utils.*;
 
-public class ProjectManager extends ProjectConfig {
+import android.content.Context;
 
+public class ProjectManager extends ProjectConfig {
+    protected Context context;
     private String projectPath = "";
     private String projectConfigFilename = "";
     private String mainModuleFilename = "";
     private String projLibsDir = "";
-
+    
+    public ProjectManager(Context context) {
+        super();
+        this.context = context;
+    }
+    
     private boolean createConfigFile(String filename, String midletName) {
         setMidletName(midletName);
         setMainModuleName(midletName.toLowerCase());

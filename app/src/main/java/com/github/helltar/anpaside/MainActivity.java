@@ -7,7 +7,6 @@ import static com.github.helltar.anpaside.Consts.DIR_MAIN;
 import static com.github.helltar.anpaside.Consts.DIR_SRC;
 import static com.github.helltar.anpaside.Consts.EXT_PAS;
 import static com.github.helltar.anpaside.Consts.EXT_PROJ;
-import static com.github.helltar.anpaside.Consts.MP3CC;
 import static com.github.helltar.anpaside.Utils.fileExists;
 import static com.github.helltar.anpaside.Utils.getPathFromUri;
 import static com.github.helltar.anpaside.logging.Logger.LMT_ERROR;
@@ -16,7 +15,6 @@ import static com.github.helltar.anpaside.logging.Logger.LMT_INFO;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -60,7 +58,7 @@ public class MainActivity extends Activity {
 
     public static CodeEditor editor;
     public static IdeConfig ideConfig;
-    private ProjectManager pman = new ProjectManager();
+    private ProjectManager projectManager = new ProjectManager(this);
 
     private static TextView tvLog;
     public static ScrollView svLog;
@@ -110,12 +108,7 @@ public class MainActivity extends Activity {
                     .setTitle("Error")
                     .setMessage("permission.WRITE_EXTERNAL_STORAGE error")
                     .setPositiveButton("Exit",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            exitApp();
-                        }
-
-                    })
+                        (dialog, whichButton) -> exitApp())
                     .show();
             }
         }
@@ -194,25 +187,23 @@ public class MainActivity extends Activity {
         final String projectPath = sdcardPath + projDir + "/" + projName + "/";
 
         if (!fileExists(projectPath)) {
-            if (pman.createProject(sdcardPath + projDir + "/", projName)) {
-                openFile(pman.getProjectConfigFilename());
+            if (projectManager.createProject(sdcardPath + projDir + "/", projName)) {
+                openFile(projectManager.getProjectConfigFilename());
             }
         } else {
             new AlertDialog.Builder(MainActivity.this)
                 .setMessage(R.string.err_project_exists)
                 .setPositiveButton(R.string.dlg_btn_rewrite,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                    (dialog, whichButton) -> {
                         try {
                             FileUtils.deleteDirectory(new File(projectPath));
-                            if (pman.createProject(sdcardPath + projDir + "/", projName)) {
-                                openFile(pman.getProjectConfigFilename());
+                            if (projectManager.createProject(sdcardPath + projDir + "/", projName)) {
+                                openFile(projectManager.getProjectConfigFilename());
                             }
                         } catch (IOException ioe) {
                             Logger.addLog(ioe);
                         }
-                    }
-                })
+                    })
                 .setNegativeButton(R.string.dlg_btn_cancel, null)
                 .show();
         }
@@ -224,10 +215,10 @@ public class MainActivity extends Activity {
             return;
         }
 
-        final String filename = pman.getProjectPath() + DIR_SRC + moduleName + EXT_PAS;
+        final String filename = projectManager.getProjectPath() + DIR_SRC + moduleName + EXT_PAS;
 
         if (!fileExists(filename)) {
-            if (pman.createModule(filename)) {
+            if (projectManager.createModule(filename)) {
                 openFile(filename);
             }
         } else {
@@ -235,25 +226,24 @@ public class MainActivity extends Activity {
                 .setMessage(R.string.err_module_exists)
                 .setNegativeButton(R.string.dlg_btn_cancel, null)
                 .setPositiveButton(R.string.dlg_btn_rewrite,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                    (dialog, whichButton) -> {
                         if (new File(filename).delete()) {
-                            if (pman.createModule(filename)) {
+                            if (projectManager.createModule(filename)) {
                                 openFile(filename);
                             }
                         } else {
                             Logger.addLog(getString(R.string.err_del_old_module) + ": " + filename, LMT_ERROR);
                         }
-                    }})
+                    })
                 .show();
         }
     }
 
     private boolean openFile(String filename) {
         if (fileExists(filename, true)) {
-            if (isProjectFile(filename) && pman.openProject(filename)) {
+            if (isProjectFile(filename) && projectManager.openProject(filename)) {
                 editor.editorConfig.setLastProject(filename);
-                filename = pman.getMainModuleFilename();
+                filename = projectManager.getMainModuleFilename();
             }
 
             if (editor.openFile(filename)) {
@@ -284,11 +274,8 @@ public class MainActivity extends Activity {
             .setTitle(R.string.dlg_title_new_project)
             .setView(view)
             .setNegativeButton(R.string.dlg_btn_cancel, null)
-            .setPositiveButton(R.string.dlg_btn_create, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    createProject(edtProjectsDir.getText().toString(), edtProjectName.getText().toString());
-                }
-            })
+            .setPositiveButton(R.string.dlg_btn_create, (dialog, whichButton) ->
+                createProject(edtProjectsDir.getText().toString(), edtProjectName.getText().toString()))
             .show();
     }
 
@@ -299,24 +286,22 @@ public class MainActivity extends Activity {
         final EditText edtMidletVendor = view.findViewById(R.id.edtMidletVendor);
         final EditText edtMidletVersion = view.findViewById(R.id.edtMidletVersion);
 
-        edtMidletName.setText(pman.getMidletName());
-        edtMidletVendor.setText(pman.getMidletVendor());
-        edtMidletVersion.setText(pman.getMidletVersion());
+        edtMidletName.setText(projectManager.getMidletName());
+        edtMidletVendor.setText(projectManager.getMidletVendor());
+        edtMidletVersion.setText(projectManager.getMidletVersion());
 
         new AlertDialog.Builder(this)
             .setTitle(R.string.manifest_mf)
             .setView(view)
             .setNegativeButton(R.string.dlg_btn_cancel, null)
-            .setPositiveButton(R.string.menu_file_save, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    try {
-                        pman.setMidletName(edtMidletName.getText().toString());
-                        pman.setMidletVendor(edtMidletVendor.getText().toString());
-                        pman.setVersion(edtMidletVersion.getText().toString());
-                        pman.save(pman.getProjectConfigFilename());
-                    } catch (IOException e) {
-                        Logger.addLog(e);
-                    }
+            .setPositiveButton(R.string.menu_file_save, (dialog, whichButton) -> {
+                try {
+                    projectManager.setMidletName(edtMidletName.getText().toString());
+                    projectManager.setMidletVendor(edtMidletVendor.getText().toString());
+                    projectManager.setVersion(edtMidletVersion.getText().toString());
+                    projectManager.save(projectManager.getProjectConfigFilename());
+                } catch (IOException e) {
+                    Logger.addLog(e);
                 }
             })
             .show();
@@ -331,12 +316,7 @@ public class MainActivity extends Activity {
             .setTitle(R.string.dlg_title_new_module)
             .setView(view)
             .setPositiveButton(R.string.dlg_btn_create,
-            new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    createModule(edtModuleName.getText().toString());
-                }
-
-            })
+                (dialog, whichButton) -> createModule(edtModuleName.getText().toString()))
             .setNegativeButton(R.string.dlg_btn_cancel, null)
             .show();
     }
@@ -377,9 +357,9 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.miCreateModule).setEnabled(pman.isProjectOpen());
+        menu.findItem(R.id.miCreateModule).setEnabled(projectManager.isProjectOpen());
         menu.findItem(R.id.miFileSave).setEnabled(editor.isFilesModified);
-        menu.findItem(R.id.miProjectConfig).setEnabled(pman.isProjectOpen());
+        menu.findItem(R.id.miProjectConfig).setEnabled(projectManager.isProjectOpen());
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -388,7 +368,7 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
 
             case R.id.miRun:
-                if (pman.isProjectOpen()) {
+                if (projectManager.isProjectOpen()) {
                     if (editor.saveAllFiles()) {
                         buildProject();
                     }
@@ -447,20 +427,13 @@ public class MainActivity extends Activity {
             .setTitle(R.string.menu_exit)
             .setMessage(R.string.dlg_msg_save_modified_files)
             .setPositiveButton(R.string.dlg_btn_yes,
-            new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
+                (dialog, whichButton) -> {
                     if (editor.saveAllFiles()) {
                         exitApp();
                     }
-                }
-            })
+                })
             .setNegativeButton(R.string.dlg_btn_no,
-            new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    exitApp();
-                }
-
-            })
+                (dialog, whichButton) -> exitApp())
             .show();
     }
 
@@ -477,21 +450,20 @@ public class MainActivity extends Activity {
                 @Override
                 public void run() {
                     builder = new ProjectBuilder(
-                        pman.getProjectConfigFilename(),
-                        DATA_LIB_PATH + MP3CC,
+                        MainActivity.this,
+                        projectManager.getProjectConfigFilename(),
+                        DATA_LIB_PATH + getString(R.string.mp3cc),
                         DATA_PKG_PATH + ASSET_DIR_STUBS + "/",
-                        ideConfig.getGlobalDirPath());
+                        ideConfig.getGlobalDirPath()
+                    );
 
                     result = builder.build();
 
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (result) {
-                                    startActionViewIntent(builder.getJarFilename());
-                                }
-                            }
-                        });
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        if (result) {
+                            startActionViewIntent(builder.getJarFilename());
+                        }
+                    });
                 }
             });
     }

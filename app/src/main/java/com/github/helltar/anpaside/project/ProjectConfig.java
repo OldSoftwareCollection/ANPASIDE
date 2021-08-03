@@ -7,69 +7,69 @@ import java.util.Properties;
 
 public class ProjectConfig {
 
-    private Properties p = new Properties();
+    private final Properties properties = new Properties();
 
     public void open(String filename) throws IOException {
-        p.load(new FileInputStream(filename));
+        properties.load(new FileInputStream(filename));
     }
 
     public void save(String filename) throws IOException {
-        p.store(new FileOutputStream(filename), null);
+        properties.store(new FileOutputStream(filename), null);
     }
 
     public void setMainModuleName(String mainModule) {
-        p.setProperty("MainModule", mainModule);
+        properties.setProperty("MainModule", mainModule);
     }
 
     public String getMainModuleName() {
-        return p.getProperty("MainModule", "");
+        return properties.getProperty("MainModule", "");
     }
 
     public void setMathType(int mathType) {
-        p.setProperty("MathType", Integer.toString(mathType));
+        properties.setProperty("MathType", Integer.toString(mathType));
     }
 
     public int getMathType() {
-        return Integer.parseInt(p.getProperty("MathType", "0"));
+        return Integer.parseInt(properties.getProperty("MathType", "0"));
     }
 
     public void setCanvasType(int canvasType) {
-        p.setProperty("CanvasType", Integer.toString(canvasType));
+        properties.setProperty("CanvasType", Integer.toString(canvasType));
     }
 
     public int getCanvasType() {
-        return Integer.parseInt(p.getProperty("CanvasType", "1"));
+        return Integer.parseInt(properties.getProperty("CanvasType", "1"));
     }
 
     public void setMidletName(String midletName) {
-        p.setProperty("Name", midletName);
+        properties.setProperty("Name", midletName);
     }
 
     public String getMidletName() {
-        return p.getProperty("Name", "app");
+        return properties.getProperty("Name", "app");
     }
 
     public void setMidletVendor(String midletVendor) {
-        p.setProperty("Vendor", midletVendor);
+        properties.setProperty("Vendor", midletVendor);
     }
 
     public String getMidletVendor() {
-        return p.getProperty("Vendor", "vendor");
+        return properties.getProperty("Vendor", "vendor");
     }
 
     public void setMidletIcon(String midletIcon) {
-        p.setProperty("Icon", midletIcon);
+        properties.setProperty("Icon", midletIcon);
     }
 
     public String getMidletIcon() {
-        return p.getProperty("Icon", "/icon.png");
+        return properties.getProperty("Icon", "/icon.png");
     }
     
     public void setVersion(String version) {
-        p.setProperty("Version", version);
+        properties.setProperty("Version", version);
     }
 
     public String getVersion() {
-        return p.getProperty("Version", "1");
+        return properties.getProperty("Version", "1");
     }
 }

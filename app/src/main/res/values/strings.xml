@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name" translatable="false">ANPASIDE</string>
 
-    <string name="app_name">ANPASIDE</string>
+    <string name="fw_class" translatable="false">FW.class</string>
+    <string name="mp3cc" translatable="false">libmp3cc.so</string>
 
     <!-- messages -->
 

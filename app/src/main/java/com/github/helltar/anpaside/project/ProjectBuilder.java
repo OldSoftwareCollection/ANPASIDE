@@ -1,30 +1,57 @@
 package com.github.helltar.anpaside.project;
 
+import static com.github.helltar.anpaside.Consts.DIR_BIN;
+import static com.github.helltar.anpaside.Consts.DIR_PREBUILD;
+import static com.github.helltar.anpaside.Consts.DIR_RES;
+import static com.github.helltar.anpaside.Consts.DIR_SRC;
+import static com.github.helltar.anpaside.Consts.EXT_CLASS;
+import static com.github.helltar.anpaside.Consts.EXT_JAR;
+import static com.github.helltar.anpaside.Consts.EXT_PAS;
+import static com.github.helltar.anpaside.Consts.LANG_ERR_FAILED_CREATE_ARCHIVE;
+import static com.github.helltar.anpaside.Consts.LANG_MSG_BUILD_SUCCESSFULLY;
+import static com.github.helltar.anpaside.Consts.TPL_MANIFEST;
+import static com.github.helltar.anpaside.Utils.copyFileToDir;
+import static com.github.helltar.anpaside.Utils.createTextFile;
+import static com.github.helltar.anpaside.Utils.fileExists;
+import static com.github.helltar.anpaside.Utils.getFileSize;
+import static com.github.helltar.anpaside.Utils.mkdir;
+import static com.github.helltar.anpaside.Utils.runProc;
+import static com.github.helltar.anpaside.logging.Logger.LMT_ERROR;
+import static com.github.helltar.anpaside.logging.Logger.LMT_INFO;
+
+import android.content.Context;
+
 import com.github.helltar.anpaside.ProcessResult;
+import com.github.helltar.anpaside.R;
 import com.github.helltar.anpaside.logging.Logger;
-import java.io.File;
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
+
 import org.apache.commons.io.FileUtils;
 
-import static com.github.helltar.anpaside.logging.Logger.*;
-import static com.github.helltar.anpaside.Utils.*;
-import static com.github.helltar.anpaside.Consts.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ProjectBuilder extends ProjectManager {
-
     private final String mp3cc;
     private final String stubsDir;
     private final String globLibsDir;
 
     private final String projPrebuildDir;
 
-    public ProjectBuilder(String filename, String mp3cc, String stubsDir, String globLibsDir) {
+    public ProjectBuilder(
+        Context context,
+        String filename,
+        String mp3cc,
+        String stubsDir,
+        String globLibsDir
+    ) {
+        super(context);
         this.mp3cc = mp3cc;
         this.stubsDir = stubsDir;
         this.globLibsDir = globLibsDir;
@@ -165,14 +192,13 @@ public class ProjectBuilder extends ProjectManager {
         }
 
         String manifestDir = projPrebuildDir + "META-INF";
-
-        if (mkdir(manifestDir)
+        
+        return mkdir(manifestDir)
             && createManifest(manifestDir)
-            && copyFileToDir(stubsDir + "/" + FW_CLASS, projPrebuildDir)) {
-            return true;
-        }
-
-        return false;
+            && copyFileToDir(
+                stubsDir + "/" + context.getString(R.string.fw_class),
+                projPrebuildDir
+            );
     }
 
     private boolean isDirEmpty(String dirPath) {
