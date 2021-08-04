@@ -7,7 +7,7 @@
     <string name="msg.install_ok">Установка успешно завершена</string>
     <string name="msg.saved">Сохранено</string>
     <string name="msg.no_open_project">Нет открытого проекта</string>
-    <string name="msg.build_successfully">Сборка успешно завершена</string>
+    <string name="message_build_successfully">Сборка успешно завершена</string>
 
     <!-- errors -->
 

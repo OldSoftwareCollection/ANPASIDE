@@ -20,7 +20,7 @@
     <string name="msg.install_ok">Installation completed</string>
     <string name="msg.saved">Saved</string>
     <string name="msg.no_open_project">No open project</string>
-    <string name="msg.build_successfully">Build completed successfully</string>
+    <string name="message_build_successfully">Build completed successfully</string>
 
     <!-- errors -->
 

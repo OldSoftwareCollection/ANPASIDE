@@ -18,9 +18,9 @@ class SettingsActivity : Activity() {
             setContentView(view)
             
             editEditorFontSize.setText(
-                MainActivity.editor.editorConfig.fontSize.toString()
+                MainActivity.codeEditor.editorConfig.fontSize.toString()
             )
-            toggleSyntaxHighlighting.isChecked = MainActivity.editor.editorConfig.highlighterEnabled
+            toggleSyntaxHighlighting.isChecked = MainActivity.codeEditor.editorConfig.highlighterEnabled
             editGlobalLibsDirectoryPath.setText(MainActivity.ideConfig.globalDirPath)
             
             saveSettingsButton.setOnClickListener {
@@ -31,10 +31,10 @@ class SettingsActivity : Activity() {
     
     private fun onSaveSettingsButtonClicked() {
         with(binding) {
-            MainActivity.editor.setFontSize(
+            MainActivity.codeEditor.setFontSize(
                 editEditorFontSize.text.toString().toInt()
             )
-            MainActivity.editor.setHighlighterEnabled(toggleSyntaxHighlighting.isChecked)
+            MainActivity.codeEditor.setHighlighterEnabled(toggleSyntaxHighlighting.isChecked)
     
             var path = editGlobalLibsDirectoryPath.text.toString()
     

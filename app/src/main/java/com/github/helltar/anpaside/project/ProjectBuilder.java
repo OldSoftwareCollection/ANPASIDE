@@ -4,8 +4,6 @@ import static com.github.helltar.anpaside.Consts.DIR_BIN;
 import static com.github.helltar.anpaside.Consts.DIR_PREBUILD;
 import static com.github.helltar.anpaside.Consts.DIR_RES;
 import static com.github.helltar.anpaside.Consts.DIR_SRC;
-import static com.github.helltar.anpaside.Consts.LANG_ERR_FAILED_CREATE_ARCHIVE;
-import static com.github.helltar.anpaside.Consts.LANG_MSG_BUILD_SUCCESSFULLY;
 import static com.github.helltar.anpaside.Utils.copyFileToDir;
 import static com.github.helltar.anpaside.Utils.createTextFile;
 import static com.github.helltar.anpaside.Utils.fileExists;
@@ -175,9 +173,9 @@ public class ProjectBuilder extends ProjectManager {
                 jarFilename)
             ) {
                 Logger.addLog(
-                    LANG_MSG_BUILD_SUCCESSFULLY + "\n" + DIR_BIN + getMidletName()
-                        + context.getString(R.string.extension_jar) + "\n" + getFileSize(jarFilename)
-                        + " KB",
+                    context.getString(R.string.message_build_successfully) + "\n" + DIR_BIN
+                        + getMidletName() + context.getString(R.string.extension_jar) + "\n"
+                        + getFileSize(jarFilename) + " KB",
                     LMT_INFO
                 );
     
@@ -280,10 +278,12 @@ public class ProjectBuilder extends ProjectManager {
         try {
             new ZipFile(zipFilename).addFolder(dirPath, param);
             return true;
-        } catch (ZipException ze) {
+        } catch (ZipException exception) {
             Logger.addLog(
-                LANG_ERR_FAILED_CREATE_ARCHIVE + ": " + dirPath + " (" + ze.getMessage() + ")",
-                LMT_ERROR);
+                context.getString(R.string.err_failed_create_archive) + ": " + dirPath + " ("
+                    + exception.getMessage() + ")",
+                LMT_ERROR
+            );
         }
 
         return false;

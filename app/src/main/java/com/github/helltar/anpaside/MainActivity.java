@@ -53,9 +53,9 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity {
 
-    public static CodeEditor editor;
+    public static CodeEditor codeEditor;
     public static IdeConfig ideConfig;
-    private ProjectManager projectManager = new ProjectManager(this);
+    private ProjectManager projectManager;
 
     private static TextView tvLog;
     public static ScrollView svLog;
@@ -71,10 +71,12 @@ public class MainActivity extends Activity {
         TabHost tabHost = findViewById(android.R.id.tabhost);
         tabHost.setup();
 
-        editor = new CodeEditor(this, tabHost);
-        editor.setBtnTabCloseName(getString(R.string.pmenu_tab_close));
+        codeEditor = new CodeEditor(this, tabHost);
+        codeEditor.setBtnTabCloseName(getString(R.string.pmenu_tab_close));
 
         ideConfig = new IdeConfig(this);
+    
+        projectManager = new ProjectManager(this);
 
         init();
     }
@@ -87,8 +89,8 @@ public class MainActivity extends Activity {
         }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            editor.openRecentFiles();
-            openFile(editor.editorConfig.getLastProject());
+            codeEditor.openRecentFiles();
+            openFile(codeEditor.editorConfig.getLastProject());
         } else {
             ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
         }
@@ -98,8 +100,8 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 0) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                editor.openRecentFiles();
-                openFile(editor.editorConfig.getLastProject());
+                codeEditor.openRecentFiles();
+                openFile(codeEditor.editorConfig.getLastProject());
             } else {
                 new AlertDialog.Builder(this)
                     .setTitle("Error")
@@ -237,11 +239,11 @@ public class MainActivity extends Activity {
     private boolean openFile(String filename) {
         if (fileExists(filename, true)) {
             if (isProjectFile(filename) && projectManager.openProject(filename)) {
-                editor.editorConfig.setLastProject(filename);
+                codeEditor.editorConfig.setLastProject(filename);
                 filename = projectManager.getMainModuleFilename();
             }
 
-            if (editor.openFile(filename)) {
+            if (codeEditor.openFile(filename)) {
                 return true;
             }
         }
@@ -357,7 +359,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.miCreateModule).setEnabled(projectManager.isProjectOpen());
-        menu.findItem(R.id.miFileSave).setEnabled(editor.isFilesModified);
+        menu.findItem(R.id.miFileSave).setEnabled(codeEditor.isFilesModified);
         menu.findItem(R.id.miProjectConfig).setEnabled(projectManager.isProjectOpen());
         return super.onPrepareOptionsMenu(menu);
     }
@@ -368,7 +370,7 @@ public class MainActivity extends Activity {
 
             case R.id.miRun:
                 if (projectManager.isProjectOpen()) {
-                    if (editor.saveAllFiles()) {
+                    if (codeEditor.saveAllFiles()) {
                         buildProject();
                     }
                 } else {
@@ -396,7 +398,7 @@ public class MainActivity extends Activity {
                 return true;
 
             case R.id.miFileSave:
-                editor.saveAllFiles(true);
+                codeEditor.saveAllFiles(true);
                 return true;
 
             case R.id.miSettings:
@@ -409,7 +411,7 @@ public class MainActivity extends Activity {
                 return true;
 
             case R.id.miExit:
-                if (editor.isFilesModified) {
+                if (codeEditor.isFilesModified) {
                     showExitDialog();
                 } else {
                     exitApp();
@@ -427,7 +429,7 @@ public class MainActivity extends Activity {
             .setMessage(R.string.dlg_msg_save_modified_files)
             .setPositiveButton(R.string.dlg_btn_yes,
                 (dialog, whichButton) -> {
-                    if (editor.saveAllFiles()) {
+                    if (codeEditor.saveAllFiles()) {
                         exitApp();
                     }
                 })
