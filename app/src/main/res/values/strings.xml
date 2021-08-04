@@ -13,7 +13,12 @@
     <string name="extension_jar" translatable="false">.jar</string>
     <string name="extension_class" translatable="false">.class</string>
 
-
+    <string name="directory_main" translatable="false">AppProjects</string>
+    <string name="directory_bin" translatable="false">bin/</string>
+    <string name="directory_src" translatable="false">src/</string>
+    <string name="directory_libs" translatable="false">libs/</string>
+    <string name="directory_res" translatable="false">res/</string>
+    <string name="directory_prebuild" translatable="false">prebuild/</string>
     <!-- messages -->
 
     <string name="msg.install_start">Installation of the compiler, wait…</string>

@@ -6,12 +6,14 @@ import android.os.Environment;
 
 import static com.github.helltar.anpaside.Consts.*;
 
+import com.github.helltar.anpaside.R;
+
 public class IdeConfig {
 
     private final String PREF_NAME_INSTALL = "install";
     private final String PREF_NAME_GLOBAL_DIR_PATH = "global_libs_dir";
 
-    private Context context;
+    private final Context context;
 
     public IdeConfig(Context context) {
         this.context = context;
@@ -34,7 +36,12 @@ public class IdeConfig {
     }
 
     public String getGlobalDirPath() {
-        return getSpMain().getString(PREF_NAME_GLOBAL_DIR_PATH, Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + DIR_MAIN + "/" + DIR_LIBS);
+        return getSpMain().getString(
+            PREF_NAME_GLOBAL_DIR_PATH,
+            Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
+                + context.getString(R.string.directory_main) + "/"
+                + context.getString(R.string.directory_libs)
+        );
     }
 
     public void setGlobalDirPath(String path) {

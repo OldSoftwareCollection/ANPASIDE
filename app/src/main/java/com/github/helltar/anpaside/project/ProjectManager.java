@@ -1,11 +1,6 @@
 package com.github.helltar.anpaside.project;
 
 import static com.github.helltar.anpaside.Consts.DATA_PKG_PATH;
-import static com.github.helltar.anpaside.Consts.DIR_BIN;
-import static com.github.helltar.anpaside.Consts.DIR_LIBS;
-import static com.github.helltar.anpaside.Consts.DIR_PREBUILD;
-import static com.github.helltar.anpaside.Consts.DIR_RES;
-import static com.github.helltar.anpaside.Consts.DIR_SRC;
 import static com.github.helltar.anpaside.Utils.copyFileToDir;
 import static com.github.helltar.anpaside.Utils.createTextFile;
 import static com.github.helltar.anpaside.Utils.getFileNameOnly;
@@ -58,14 +53,15 @@ public class ProjectManager extends ProjectConfig {
                 projectConfigFilename,
                 name
             )
-            && createHelloWorld(projectPath + DIR_SRC + name.toLowerCase() + context.getString(R.string.extension_pas))) {
+            && createHelloWorld(projectPath + context.getString(R.string.directory_src)
+                + name.toLowerCase() + context.getString(R.string.extension_pas))) {
                 createGitignore(projectPath);
                 copyFileToDir(
                     DATA_PKG_PATH + context.getString(R.string.assets_directory_files) + "/icon.png",
-                    projectPath + DIR_RES
+                    projectPath + context.getString(R.string.directory_res)
                 );
                 return true;
-        }
+            }
 
         return false;
     }
@@ -76,9 +72,9 @@ public class ProjectManager extends ProjectConfig {
 
             projectPath = FilenameUtils.getFullPath(filename);
             projectConfigFilename = filename;
-            mainModuleFilename = projectPath + DIR_SRC + getMainModuleName()
-                + context.getString(R.string.extension_pas);
-            projLibsDir = projectPath + DIR_LIBS;
+            mainModuleFilename = projectPath + context.getString(R.string.directory_src)
+                + getMainModuleName() + context.getString(R.string.extension_pas);
+            projLibsDir = projectPath + context.getString(R.string.directory_libs);
 
             return true;
 
@@ -90,15 +86,11 @@ public class ProjectManager extends ProjectConfig {
     }
 
     public boolean mkProjectDirs(String path) {
-        if (mkdir(path + DIR_BIN)
-            && mkdir(path + DIR_SRC)
-            && mkdir(path + DIR_PREBUILD)
-            && mkdir(path + DIR_RES)
-            && mkdir(path + DIR_LIBS)) {
-            return true;
-        }
-
-        return false;
+        return mkdir(path + context.getString(R.string.directory_bin))
+            && mkdir(path + context.getString(R.string.directory_src))
+            && mkdir(path + context.getString(R.string.directory_prebuild))
+            && mkdir(path + context.getString(R.string.directory_res))
+            && mkdir(path + context.getString(R.string.directory_libs));
     }
 
     public boolean isProjectOpen() {

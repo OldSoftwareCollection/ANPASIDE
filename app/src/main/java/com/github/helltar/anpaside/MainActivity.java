@@ -2,8 +2,6 @@ package com.github.helltar.anpaside;
 
 import static com.github.helltar.anpaside.Consts.DATA_LIB_PATH;
 import static com.github.helltar.anpaside.Consts.DATA_PKG_PATH;
-import static com.github.helltar.anpaside.Consts.DIR_MAIN;
-import static com.github.helltar.anpaside.Consts.DIR_SRC;
 import static com.github.helltar.anpaside.Utils.fileExists;
 import static com.github.helltar.anpaside.Utils.getPathFromUri;
 import static com.github.helltar.anpaside.logging.Logger.LMT_ERROR;
@@ -211,8 +209,8 @@ public class MainActivity extends Activity {
             return;
         }
 
-        final String filename = projectManager.getProjectPath() + DIR_SRC + moduleName
-            + getString(R.string.extension_pas);
+        final String filename = projectManager.getProjectPath() + getString(R.string.directory_src)
+            + moduleName + getString(R.string.extension_pas);
 
         if (!fileExists(filename)) {
             if (projectManager.createModule(filename)) {
@@ -269,7 +267,9 @@ public class MainActivity extends Activity {
         final EditText edtProjectsDir = view.findViewById(R.id.edtProjectsDir);
         final EditText edtProjectName = view.findViewById(R.id.edtProjectName);
 
-        edtProjectsDir.setText(DIR_MAIN);
+        edtProjectsDir.setText(
+            getString(R.string.directory_main)
+        );
 
         new AlertDialog.Builder(this)
             .setTitle(R.string.dlg_title_new_project)

@@ -1,9 +1,5 @@
 package com.github.helltar.anpaside.project;
 
-import static com.github.helltar.anpaside.Consts.DIR_BIN;
-import static com.github.helltar.anpaside.Consts.DIR_PREBUILD;
-import static com.github.helltar.anpaside.Consts.DIR_RES;
-import static com.github.helltar.anpaside.Consts.DIR_SRC;
 import static com.github.helltar.anpaside.Utils.copyFileToDir;
 import static com.github.helltar.anpaside.Utils.createTextFile;
 import static com.github.helltar.anpaside.Utils.fileExists;
@@ -52,7 +48,7 @@ public class ProjectBuilder extends ProjectManager {
 
         openProject(filename);
 
-        projPrebuildDir = getProjectPath() + DIR_PREBUILD;
+        projPrebuildDir = getProjectPath() + context.getString(R.string.directory_prebuild);
     }
 
     private ProcessResult runCompiler(String filename, boolean detectUnits) {
@@ -85,8 +81,8 @@ public class ProjectBuilder extends ProjectManager {
 
         while (matcher.find()) {
             String unitName = matcher.group(1);
-            String unitFilename = getProjectPath() + DIR_SRC + unitName
-                + context.getString(R.string.extension_pas);
+            String unitFilename = getProjectPath() + context.getString(R.string.directory_src)
+                + unitName + context.getString(R.string.extension_pas);
 
             if (fileExists(unitFilename, true)) {
                 if (
@@ -169,13 +165,14 @@ public class ProjectBuilder extends ProjectManager {
             && compile(getMainModuleFilename())
             && createZip(projPrebuildDir, jarFilename)
             && addResToZip(
-                getProjectPath() + DIR_RES,
-                jarFilename)
+                getProjectPath() + context.getString(R.string.directory_res),
+                jarFilename
+                )
             ) {
                 Logger.addLog(
-                    context.getString(R.string.message_build_successfully) + "\n" + DIR_BIN
-                        + getMidletName() + context.getString(R.string.extension_jar) + "\n"
-                        + getFileSize(jarFilename) + " KB",
+                    context.getString(R.string.message_build_successfully) + "\n"
+                        + context.getString(R.string.directory_bin) + getMidletName() + context.getString(R.string.extension_jar)
+                        + "\n" + getFileSize(jarFilename) + " KB",
                     LMT_INFO
                 );
     
@@ -212,7 +209,7 @@ public class ProjectBuilder extends ProjectManager {
     }
 
     public String getJarFilename() {
-        return getProjectPath() + DIR_BIN + getMidletName()
+        return getProjectPath() + context.getString(R.string.directory_bin) + getMidletName()
             + context.getString(R.string.extension_jar);
     }
 
