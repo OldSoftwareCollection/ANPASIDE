@@ -6,7 +6,6 @@ import static com.github.helltar.anpaside.Consts.DIR_RES;
 import static com.github.helltar.anpaside.Consts.DIR_SRC;
 import static com.github.helltar.anpaside.Consts.LANG_ERR_FAILED_CREATE_ARCHIVE;
 import static com.github.helltar.anpaside.Consts.LANG_MSG_BUILD_SUCCESSFULLY;
-import static com.github.helltar.anpaside.Consts.TPL_MANIFEST;
 import static com.github.helltar.anpaside.Utils.copyFileToDir;
 import static com.github.helltar.anpaside.Utils.createTextFile;
 import static com.github.helltar.anpaside.Utils.fileExists;
@@ -241,11 +240,18 @@ public class ProjectBuilder extends ProjectManager {
         int midp = getCanvasType() < 1 ? 1 : 2;
         int cldc = midp == 2 ? 1 : 0;
 
-        return createTextFile(path + "/MANIFEST.MF",
-                              String.format(TPL_MANIFEST,
-                                            getMidletName(), getMidletVendor(),
-                                            getMidletName(), getMidletVersion(),
-                                            cldc, midp));
+        return createTextFile(
+            path + "/MANIFEST.MF",
+            String.format(
+                context.getString(R.string.template_manifest),
+                getMidletName(),
+                getMidletVendor(),
+                getMidletName(),
+                getMidletVersion(),
+                cldc,
+                midp
+            )
+        );
     }
 
     private boolean addResToZip(String resDir, String zipFilename) {

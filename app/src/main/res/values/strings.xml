@@ -73,7 +73,7 @@
     <string name="dlg.btn.yes">Yes</string>
     <string name="dlg.btn.no">No</string>
 
-    <string name="manifest.mf">MANIFEST.MF</string>
+    <string name="manifest.mf" translatable="false">MANIFEST.MF</string>
     
     <string name="about_text">
         Аuthor: Helltar
@@ -83,7 +83,7 @@
 
     <!-- templates -->
 
-    <string name="tpl.helloworld">
+    <string name="template_hello_world" translatable="false">
 "program %s;
 var
     s: string;
@@ -101,7 +101,7 @@ begin
 end."
     </string>
 
-    <string name="tpl.module">
+    <string name="template_module" translatable="false">
 "unit %s;
 
 interface
@@ -119,18 +119,18 @@ initialization
 end."
     </string>
 
-    <string name="tpl.manifest" formatted="false">
+    <string name="template_manifest" formatted="false" translatable="false">
 "Manifest-Version: 1.0
 Created-By: ANPASIDE
 MIDlet-1: %s, /icon.png, FW
 MIDlet-Vendor: %s
 MIDlet-Name: %s
 MIDlet-Version: %s
-MicroEdition-Configuration: CLDC-1.%s
-MicroEdition-Profile: MIDP-%s.0"
+MicroEdition-Configuration: CLDC-1.%d
+MicroEdition-Profile: MIDP-%d.0"
     </string>
 
-    <string name="tpl.gitignore">
+    <string name="template_gitignore" translatable="false">
 "bin/
 prebuild/"
     </string>

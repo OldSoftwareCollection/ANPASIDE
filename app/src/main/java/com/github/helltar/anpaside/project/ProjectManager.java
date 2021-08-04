@@ -6,9 +6,6 @@ import static com.github.helltar.anpaside.Consts.DIR_LIBS;
 import static com.github.helltar.anpaside.Consts.DIR_PREBUILD;
 import static com.github.helltar.anpaside.Consts.DIR_RES;
 import static com.github.helltar.anpaside.Consts.DIR_SRC;
-import static com.github.helltar.anpaside.Consts.TPL_GITIGNORE;
-import static com.github.helltar.anpaside.Consts.TPL_HELLOWORLD;
-import static com.github.helltar.anpaside.Consts.TPL_MODULE;
 import static com.github.helltar.anpaside.Utils.copyFileToDir;
 import static com.github.helltar.anpaside.Utils.createTextFile;
 import static com.github.helltar.anpaside.Utils.getFileNameOnly;
@@ -61,8 +58,8 @@ public class ProjectManager extends ProjectConfig {
                 projectConfigFilename,
                 name
             )
-            && createHW(projectPath + DIR_SRC + name.toLowerCase() + context.getString(R.string.extension_pas))) {
-                createGitIgnore(projectPath);
+            && createHelloWorld(projectPath + DIR_SRC + name.toLowerCase() + context.getString(R.string.extension_pas))) {
+                createGitignore(projectPath);
                 copyFileToDir(
                     DATA_PKG_PATH + context.getString(R.string.assets_directory_files) + "/icon.png",
                     projectPath + DIR_RES
@@ -128,16 +125,31 @@ public class ProjectManager extends ProjectConfig {
         return getVersion();
     }
 
-    private boolean createGitIgnore(String path) {
-        return createTextFile(path + ".gitignore", TPL_GITIGNORE);
+    private boolean createGitignore(String path) {
+        return createTextFile(
+            path + ".gitignore",
+            context.getString(R.string.template_gitignore)
+        );
     }
 
-    private boolean createHW(String filename) {
-        return createTextFile(filename, String.format(TPL_HELLOWORLD, getFileNameOnly(filename)));
+    private boolean createHelloWorld(String filename) {
+        return createTextFile(
+            filename,
+            String.format(
+                context.getString(R.string.template_hello_world),
+                getFileNameOnly(filename)
+            )
+        );
     }
 
     public boolean createModule(String filename) {
-        return createTextFile(filename, String.format(TPL_MODULE, getFileNameOnly(filename)));
+        return createTextFile(
+            filename,
+            String.format(
+                context.getString(R.string.template_module),
+                getFileNameOnly(filename)
+            )
+        );
     }
 }
 

@@ -136,18 +136,15 @@ public class MainActivity extends Activity {
                                            + msgLines[0].replace("\n", "<br>") + "</font><br>"
                                            + lines);
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    if (tvLog.getText().length() > 1024) {
-                        tvLog.setText("");
-                    }
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (tvLog.getText().length() > 1024) {
+                tvLog.setText("");
+            }
 
-                    tvLog.append(text);
-                    svLog.fullScroll(ScrollView.FOCUS_DOWN);
-                    svLog.setVisibility(View.VISIBLE);
-                }
-            });
+            tvLog.append(text);
+            svLog.fullScroll(ScrollView.FOCUS_DOWN);
+            svLog.setVisibility(View.VISIBLE);
+        });
     }
 
     private void showOpenFileDialog() {
