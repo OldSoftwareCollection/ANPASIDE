@@ -2,8 +2,6 @@ package com.github.helltar.anpaside;
 
 import static com.github.helltar.anpaside.Consts.DATA_LIB_PATH;
 import static com.github.helltar.anpaside.Consts.DATA_PKG_PATH;
-import static com.github.helltar.anpaside.Utils.fileExists;
-import static com.github.helltar.anpaside.Utils.getPathFromUri;
 import static com.github.helltar.anpaside.logging.Logger.LMT_ERROR;
 import static com.github.helltar.anpaside.logging.Logger.LMT_INFO;
 
@@ -51,6 +49,7 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity {
 
+    private Utils utils;
     public static CodeEditor codeEditor;
     public static IdeConfig ideConfig;
     private ProjectManager projectManager;
@@ -69,12 +68,17 @@ public class MainActivity extends Activity {
         TabHost tabHost = findViewById(android.R.id.tabhost);
         tabHost.setup();
 
+        utils = new Utils(this);
+        
         codeEditor = new CodeEditor(this, tabHost);
         codeEditor.setBtnTabCloseName(getString(R.string.pmenu_tab_close));
 
         ideConfig = new IdeConfig(this);
     
-        projectManager = new ProjectManager(this);
+        projectManager = new ProjectManager(
+            this,
+            utils
+        );
 
         init();
     }
@@ -166,7 +170,12 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            openFile(getPathFromUri(this, data.getData()));
+            openFile(
+                utils.getPathFromUri(
+                    this,
+                    data.getData()
+                )
+            );
         }
     }
 
@@ -180,7 +189,7 @@ public class MainActivity extends Activity {
 
         final String projectPath = sdcardPath + projDir + "/" + projName + "/";
 
-        if (!fileExists(projectPath)) {
+        if (!utils.fileExists(projectPath)) {
             if (projectManager.createProject(sdcardPath + projDir + "/", projName)) {
                 openFile(projectManager.getProjectConfigFilename());
             }
@@ -212,7 +221,7 @@ public class MainActivity extends Activity {
         final String filename = projectManager.getProjectPath() + getString(R.string.directory_src)
             + moduleName + getString(R.string.extension_pas);
 
-        if (!fileExists(filename)) {
+        if (!utils.fileExists(filename)) {
             if (projectManager.createModule(filename)) {
                 openFile(filename);
             }
@@ -235,7 +244,10 @@ public class MainActivity extends Activity {
     }
 
     private boolean openFile(String filename) {
-        if (fileExists(filename, true)) {
+        if (utils.fileExists(
+            filename,
+            true
+        )) {
             if (isProjectFile(filename) && projectManager.openProject(filename)) {
                 codeEditor.editorConfig.setLastProject(filename);
                 filename = projectManager.getMainModuleFilename();
@@ -452,6 +464,7 @@ public class MainActivity extends Activity {
                 public void run() {
                     builder = new ProjectBuilder(
                         MainActivity.this,
+                        utils,
                         projectManager.getProjectConfigFilename(),
                         DATA_LIB_PATH + getString(R.string.mp3cc),
                         DATA_PKG_PATH + getString(R.string.assets_directory_stubs) + "/",

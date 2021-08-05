@@ -1,11 +1,5 @@
 package com.github.helltar.anpaside.project;
 
-import static com.github.helltar.anpaside.Utils.copyFileToDir;
-import static com.github.helltar.anpaside.Utils.createTextFile;
-import static com.github.helltar.anpaside.Utils.fileExists;
-import static com.github.helltar.anpaside.Utils.getFileSize;
-import static com.github.helltar.anpaside.Utils.mkdir;
-import static com.github.helltar.anpaside.Utils.runProc;
 import static com.github.helltar.anpaside.logging.Logger.LMT_ERROR;
 import static com.github.helltar.anpaside.logging.Logger.LMT_INFO;
 
@@ -13,6 +7,7 @@ import android.content.Context;
 
 import com.github.helltar.anpaside.ProcessResult;
 import com.github.helltar.anpaside.R;
+import com.github.helltar.anpaside.Utils;
 import com.github.helltar.anpaside.logging.Logger;
 
 import net.lingala.zip4j.core.ZipFile;
@@ -36,12 +31,16 @@ public class ProjectBuilder extends ProjectManager {
 
     public ProjectBuilder(
         Context context,
+        Utils utils,
         String filename,
         String mp3cc,
         String stubsDir,
         String globLibsDir
     ) {
-        super(context);
+        super(
+            context,
+            utils
+        );
         this.mp3cc = mp3cc;
         this.stubsDir = stubsDir;
         this.globLibsDir = globLibsDir;
@@ -65,7 +64,7 @@ public class ProjectBuilder extends ProjectManager {
             args += " -d";
         }
 
-        return runProc(args);
+        return utils.runProc(args);
     }
 
     public boolean compile(final String filename) {
@@ -84,12 +83,10 @@ public class ProjectBuilder extends ProjectManager {
             String unitFilename = getProjectPath() + context.getString(R.string.directory_src)
                 + unitName + context.getString(R.string.extension_pas);
 
-            if (fileExists(unitFilename, true)) {
-                if (
-                    !fileExists(
+            if (utils.fileExists(unitFilename, true)) {
+                if (!utils.fileExists(
                         projPrebuildDir + unitName + context.getString(R.string.extension_class)
-                    )
-                ) {
+                )) {
                     if (compile(unitFilename)) {
                         continue;
                     } else {
@@ -135,9 +132,9 @@ public class ProjectBuilder extends ProjectManager {
             String libName = "Lib_" + matcher.group(1) + context.getString(R.string.extension_class);
 
             // пробуем найти библиотеку в libs каталоге проекта
-            if (!copyFileToDir(getProjLibsDir() + libName, projPrebuildDir, false)) {
+            if (!utils.copyFileToDir(getProjLibsDir() + libName, projPrebuildDir, false)) {
                 // если нет берем из глобального
-                if (!copyFileToDir(globLibsDir + libName, projPrebuildDir, true)) {
+                if (!utils.copyFileToDir(globLibsDir + libName, projPrebuildDir, true)) {
                     return false;
                 }
             }
@@ -150,7 +147,10 @@ public class ProjectBuilder extends ProjectManager {
         Matcher m = Pattern.compile("\\^2(.*?)\n").matcher(output);
 
         while (m.find()) {
-            if (!copyFileToDir(stubsDir + m.group(1), projPrebuildDir)) {
+            if (!utils.copyFileToDir(
+                    stubsDir + m.group(1),
+                    projPrebuildDir
+            )) {
                 return false;
             }
         }
@@ -172,7 +172,7 @@ public class ProjectBuilder extends ProjectManager {
                 Logger.addLog(
                     context.getString(R.string.message_build_successfully) + "\n"
                         + context.getString(R.string.directory_bin) + getMidletName() + context.getString(R.string.extension_jar)
-                        + "\n" + getFileSize(jarFilename) + " KB",
+                        + "\n" + utils.getFileSize(jarFilename) + " KB",
                     LMT_INFO
                 );
     
@@ -195,9 +195,9 @@ public class ProjectBuilder extends ProjectManager {
 
         String manifestDir = projPrebuildDir + "META-INF";
         
-        return mkdir(manifestDir)
+        return utils.mkdir(manifestDir)
             && createManifest(manifestDir)
-            && copyFileToDir(
+            && utils.copyFileToDir(
                 stubsDir + "/" + context.getString(R.string.fw_class),
                 projPrebuildDir
             );
@@ -235,7 +235,7 @@ public class ProjectBuilder extends ProjectManager {
         int midp = getCanvasType() < 1 ? 1 : 2;
         int cldc = midp == 2 ? 1 : 0;
 
-        return createTextFile(
+        return utils.createTextFile(
             path + "/MANIFEST.MF",
             String.format(
                 context.getString(R.string.template_manifest),

@@ -17,8 +17,13 @@ import static com.github.helltar.anpaside.Consts.*;
 import static com.github.helltar.anpaside.logging.Logger.*;
 
 public class Utils {
-
-    public static boolean mkdir(String dirName) {
+    Context context;
+    
+    public Utils(Context context) {
+        this.context = context;
+    }
+    
+    public boolean mkdir(String dirName) {
         if (new File(dirName).mkdirs() | fileExists(dirName)) {
             return true;
         } else {
@@ -28,11 +33,11 @@ public class Utils {
         return false;
     }
 
-    public static boolean copyFileToDir(String srcFile, String destDir) {
+    public boolean copyFileToDir(String srcFile, String destDir) {
         return copyFileToDir(srcFile, destDir, true);
     }
 
-    public static boolean copyFileToDir(String srcFile, String destDir, boolean showErrMsg) {
+    public boolean copyFileToDir(String srcFile, String destDir, boolean showErrMsg) {
         if (fileExists(srcFile, showErrMsg)) {
             try {
                 FileUtils.copyFileToDirectory(new File(srcFile), new File(destDir));
@@ -45,11 +50,11 @@ public class Utils {
         return false;
     }
 
-    public static boolean fileExists(String filename) {
+    public boolean fileExists(String filename) {
         return fileExists(filename, false);
     }
 
-    public static boolean fileExists(String filename, boolean showErrMsg) {
+    public boolean fileExists(String filename, boolean showErrMsg) {
         if (!filename.isEmpty()) {
             if (new File(filename).exists()) {
                 return true;
@@ -61,15 +66,15 @@ public class Utils {
         return false;
     }
 
-    public static String getFileNameOnly(String filename) {
+    public String getFileNameOnly(String filename) {
         return FilenameUtils.getBaseName(filename);
     }
 
-    public static long getFileSize(String filename) {
+    public long getFileSize(String filename) {
         return new File(filename).length() / 1024;
     }
 
-    public static boolean createTextFile(String filename, String text) {
+    public boolean createTextFile(String filename, String text) {
         try {
             FileUtils.writeStringToFile(new File(filename), text);
             return true;
@@ -80,7 +85,7 @@ public class Utils {
         return false;
     }
 
-    public static ProcessResult runProc(String args) {
+    public ProcessResult runProc(String args) {
         boolean result = false;
         StringBuffer output = new StringBuffer();
 
@@ -98,16 +103,14 @@ public class Utils {
 
             result = true;
 
-        } catch (IOException ioe) {
-            Logger.addLog(ioe);
-        } catch (InterruptedException ie) {
-            Logger.addLog(ie);
+        } catch (IOException | InterruptedException exception) {
+            Logger.addLog(exception);
         }
-
+    
         return new ProcessResult(result, output.toString());
     }
 
-    public static String getPathFromUri(final Context context, final Uri uri) {
+    public String getPathFromUri(final Context context, final Uri uri) {
         if (DocumentsContract.isDocumentUri(context, uri)) {
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
@@ -127,7 +130,7 @@ public class Utils {
         return uri.toString();
     }
 
-    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+    private String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
         Cursor cursor = null;
         final String column = "_data";
         final String[] projection = { column };
@@ -148,7 +151,7 @@ public class Utils {
         return uri.toString();
     }
 
-    private static boolean isExternalStorageDocument(Uri uri) {
+    private boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 }
