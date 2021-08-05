@@ -1,7 +1,5 @@
 package com.github.helltar.anpaside.ide;
 
-import static com.github.helltar.anpaside.Consts.DATA_PKG_PATH;
-
 import android.content.Context;
 import android.content.res.AssetManager;
 
@@ -42,9 +40,11 @@ public class IdeInit {
     private boolean copyAssets(String assetDir) {
         try {
             String[] assets = assetManager.list(assetDir);
-
+    
+            final String dataPackagePath = context.getApplicationInfo().dataDir + "/";
+    
             if (assets.length > 0) {
-                File dir = new File(DATA_PKG_PATH + assetDir);
+                File dir = new File(dataPackagePath + assetDir);
 
                 if (!dir.exists()) {
                     dir.mkdir();
@@ -54,7 +54,7 @@ public class IdeInit {
                     copyAssets(assetDir + "/" + assets[i]);
                 }
             } else {
-                FileUtils.copyInputStreamToFile(assetManager.open(assetDir), new File(DATA_PKG_PATH + assetDir));
+                FileUtils.copyInputStreamToFile(assetManager.open(assetDir), new File(dataPackagePath + assetDir));
             }
 
             return true;

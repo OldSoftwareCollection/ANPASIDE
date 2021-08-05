@@ -1,7 +1,5 @@
 package com.github.helltar.anpaside.project;
 
-import static com.github.helltar.anpaside.Consts.DATA_PKG_PATH;
-
 import android.content.Context;
 
 import com.github.helltar.anpaside.R;
@@ -48,22 +46,26 @@ public class ProjectManager extends ProjectConfig {
     public boolean createProject(String path, String name) {
         projectPath = path + name + "/";
         projectConfigFilename = projectPath + name + context.getString(R.string.extension_proj);
-
-        if (
-            mkProjectDirs(projectPath)
+    
+        final String dataPackagePath = context.getApplicationInfo().dataDir + "/";
+    
+        if (mkProjectDirs(projectPath)
             && createConfigFile(
                 projectConfigFilename,
                 name
             )
-            && createHelloWorld(projectPath + context.getString(R.string.directory_src)
-                + name.toLowerCase() + context.getString(R.string.extension_pas))) {
-                createGitignore(projectPath);
-                utils.copyFileToDir(
-                    DATA_PKG_PATH + context.getString(R.string.assets_directory_files) + "/icon.png",
-                    projectPath + context.getString(R.string.directory_res)
-                );
-                return true;
-            }
+            && createHelloWorld(
+                projectPath + context.getString(R.string.directory_src) + name.toLowerCase() + context.getString(R.string.extension_pas)
+            )
+        ) {
+            createGitignore(projectPath);
+            utils.copyFileToDir(
+                dataPackagePath + context.getString(R.string.assets_directory_files)
+                    + "/icon.png",
+                projectPath + context.getString(R.string.directory_res)
+            );
+            return true;
+        }
 
         return false;
     }

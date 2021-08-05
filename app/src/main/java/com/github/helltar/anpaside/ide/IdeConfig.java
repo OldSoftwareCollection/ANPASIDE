@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 
-import static com.github.helltar.anpaside.Consts.*;
-
 import com.github.helltar.anpaside.R;
 
 public class IdeConfig {

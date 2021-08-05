@@ -1,7 +1,5 @@
 package com.github.helltar.anpaside;
 
-import static com.github.helltar.anpaside.Consts.DATA_LIB_PATH;
-import static com.github.helltar.anpaside.Consts.DATA_PKG_PATH;
 import static com.github.helltar.anpaside.logging.Logger.LMT_ERROR;
 import static com.github.helltar.anpaside.logging.Logger.LMT_INFO;
 
@@ -462,12 +460,15 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void run() {
+                    final String dataPackagePath = MainActivity.this.getApplicationInfo().dataDir + "/";
+                    final String dataLibPath = MainActivity.this.getApplicationInfo().nativeLibraryDir + "/";
+    
                     builder = new ProjectBuilder(
                         MainActivity.this,
                         utils,
                         projectManager.getProjectConfigFilename(),
-                        DATA_LIB_PATH + getString(R.string.mp3cc),
-                        DATA_PKG_PATH + getString(R.string.assets_directory_stubs) + "/",
+                        dataLibPath + getString(R.string.mp3cc),
+                        dataPackagePath + getString(R.string.assets_directory_stubs) + "/",
                         ideConfig.getGlobalDirPath()
                     );
 

@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
-import static com.github.helltar.anpaside.Consts.*;
 import static com.github.helltar.anpaside.logging.Logger.*;
 
 public class Utils {
