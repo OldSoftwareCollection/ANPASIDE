@@ -17,8 +17,8 @@
     <string name="err.module_exists">Модуль с таким именем уже существует</string>
     <string name="err.del_old_module">Ошибка при удалении старого модуля</string>
     <string name="err.failed_create_archive">Не удалось создать архив</string>
-    <string name="err.file_not_found">Файл не найден</string>
-    <string name="err.create_dir">Не удалось создать каталог</string>
+    <string name="error_file_not_found">Файл не найден</string>
+    <string name="error_directory_creation">Не удалось создать каталог</string>
 
     <!-- menu -->
 

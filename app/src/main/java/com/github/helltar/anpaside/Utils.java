@@ -27,7 +27,10 @@ public class Utils {
         if (new File(dirName).mkdirs() | fileExists(dirName)) {
             return true;
         } else {
-            Logger.addLog(LANG_ERR_CREATE_DIR + ": " + dirName, LMT_ERROR);
+            Logger.addLog(
+                context.getString(R.string.error_directory_creation) + ": " + dirName,
+                LMT_ERROR
+            );
         }
 
         return false;
@@ -59,7 +62,10 @@ public class Utils {
             if (new File(filename).exists()) {
                 return true;
             } else if (showErrMsg) {
-                Logger.addLog(LANG_ERR_FILE_NOT_FOUND + ": " + filename, LMT_ERROR);
+                Logger.addLog(
+                    context.getString(R.string.error_file_not_found) + ": " + filename,
+                    LMT_ERROR
+                );
             }
         }
 
