@@ -1,14 +1,12 @@
 package com.github.helltar.anpaside.project;
 
-import static com.github.helltar.anpaside.logging.Logger.LMT_ERROR;
-import static com.github.helltar.anpaside.logging.Logger.LMT_INFO;
-
 import android.content.Context;
 
 import com.github.helltar.anpaside.ProcessResult;
 import com.github.helltar.anpaside.R;
 import com.github.helltar.anpaside.Utils;
 import com.github.helltar.anpaside.logging.Logger;
+import com.github.helltar.anpaside.logging.LoggerMessageType;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -115,7 +113,10 @@ public class ProjectBuilder extends ProjectManager {
                 return true;
             }
         } else {
-            Logger.addLog(cleanOutput, LMT_ERROR);
+            Logger.addLog(
+                cleanOutput,
+                LoggerMessageType.ERROR.ordinal()
+            );
         }
 
         return false;
@@ -173,7 +174,7 @@ public class ProjectBuilder extends ProjectManager {
                     context.getString(R.string.message_build_successfully) + "\n"
                         + context.getString(R.string.directory_bin) + getMidletName() + context.getString(R.string.extension_jar)
                         + "\n" + utils.getFileSize(jarFilename) + " KB",
-                    LMT_INFO
+                    LoggerMessageType.INFO.ordinal()
                 );
     
                 return true;
@@ -279,7 +280,7 @@ public class ProjectBuilder extends ProjectManager {
             Logger.addLog(
                 context.getString(R.string.err_failed_create_archive) + ": " + dirPath + " ("
                     + exception.getMessage() + ")",
-                LMT_ERROR
+                LoggerMessageType.ERROR.ordinal()
             );
         }
 

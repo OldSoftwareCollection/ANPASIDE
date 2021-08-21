@@ -1,8 +1,5 @@
 package com.github.helltar.anpaside;
 
-import static com.github.helltar.anpaside.logging.Logger.LMT_ERROR;
-import static com.github.helltar.anpaside.logging.Logger.LMT_INFO;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,6 +30,7 @@ import com.github.helltar.anpaside.editor.CodeEditor;
 import com.github.helltar.anpaside.ide.IdeConfig;
 import com.github.helltar.anpaside.ide.IdeInit;
 import com.github.helltar.anpaside.logging.Logger;
+import com.github.helltar.anpaside.logging.LoggerMessageType;
 import com.github.helltar.anpaside.project.ProjectBuilder;
 import com.github.helltar.anpaside.project.ProjectManager;
 
@@ -120,17 +118,17 @@ public class MainActivity extends Activity {
 
         String fontColor = "#aaaaaa";
 
-        if (msgType == LMT_INFO) {
+        if (msgType == LoggerMessageType.INFO.ordinal()) {
             fontColor = "#00aa00";
-        } else if (msgType == LMT_ERROR) {
+        } else if (msgType == LoggerMessageType.ERROR.ordinal()) {
             fontColor = "#ee0000";
         }
 
         String[] msgLines = msg.split("\n");
-        String lines = "";
+        StringBuilder lines = new StringBuilder();
 
         for (int i = 1; i < msgLines.length; i++) {
-            lines += "\t\t\t\t\t\t\t\t\t- " + msgLines[i] + "<br>";
+            lines.append("\t\t\t\t\t\t\t\t\t- ").append(msgLines[i]).append("<br>");
         }
 
         final Spanned text = Html.fromHtml(new SimpleDateFormat("[HH:mm:ss]: ").format(new Date())
@@ -234,7 +232,10 @@ public class MainActivity extends Activity {
                                 openFile(filename);
                             }
                         } else {
-                            Logger.addLog(getString(R.string.err_del_old_module) + ": " + filename, LMT_ERROR);
+                            Logger.addLog(
+                                getString(R.string.err_del_old_module) + ": " + filename,
+                                LoggerMessageType.ERROR.ordinal()
+                            );
                         }
                     })
                 .show();
@@ -493,7 +494,10 @@ public class MainActivity extends Activity {
             ).install()
         ) {
             ideConfig.setInstState(true);
-            Logger.addLog(getString(R.string.msg_install_ok), LMT_INFO);
+            Logger.addLog(
+                getString(R.string.msg_install_ok),
+                LoggerMessageType.INFO.ordinal()
+            );
         }
     }
 }

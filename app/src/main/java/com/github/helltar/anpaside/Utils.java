@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import com.github.helltar.anpaside.logging.Logger;
+import com.github.helltar.anpaside.logging.LoggerMessageType;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +30,7 @@ public class Utils {
         } else {
             Logger.addLog(
                 context.getString(R.string.error_directory_creation) + ": " + dirName,
-                LMT_ERROR
+                LoggerMessageType.ERROR.ordinal()
             );
         }
 
@@ -63,7 +65,7 @@ public class Utils {
             } else if (showErrMsg) {
                 Logger.addLog(
                     context.getString(R.string.error_file_not_found) + ": " + filename,
-                    LMT_ERROR
+                    LoggerMessageType.ERROR.ordinal()
                 );
             }
         }
