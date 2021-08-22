@@ -27,19 +27,25 @@ import android.content.Context;
  *   RoboErrorReporter.bindReporter(yourContext);
  */
 public final class RoboErrorReporter {
-
-    private RoboErrorReporter() { }
+    private final Context context;
+    
+    public RoboErrorReporter(Context context) {
+        this.context = context;
+    }
 
     /**
      * Apply error reporting to a specified application context
-     * @param context context for which errors are reported (used to get package name)
      */
-    public static void bindReporter(Context context) {
+    public void bindReporter() {
         Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler.inContext(context));
     }
 
-    public static void reportError(Context context, Throwable error) {
-        ExceptionHandler.reportOnlyHandler(context).uncaughtException(Thread.currentThread(), error);
+    public void reportError(Throwable error) {
+        ExceptionHandler.reportOnlyHandler(context)
+            .uncaughtException(
+                Thread.currentThread(),
+                error
+            );
     }
 }
 

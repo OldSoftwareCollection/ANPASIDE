@@ -5,30 +5,35 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.DocumentsContract;
-import com.github.helltar.anpaside.logging.Logger;
+
+import com.github.helltar.anpaside.logging.LoggerInterface;
 import com.github.helltar.anpaside.logging.LoggerMessageType;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-
-import static com.github.helltar.anpaside.logging.Logger.*;
 
 public class Utils {
     Context context;
+    LoggerInterface logger;
     
-    public Utils(Context context) {
+    public Utils(
+        Context context,
+        LoggerInterface logger
+    ) {
         this.context = context;
+        this.logger = logger;
     }
     
     public boolean mkdir(String dirName) {
         if (new File(dirName).mkdirs() | fileExists(dirName)) {
             return true;
         } else {
-            Logger.addLog(
+            logger.showLoggerMessage(
                 context.getString(R.string.error_directory_creation) + ": " + dirName,
                 LoggerMessageType.ERROR.ordinal()
             );
@@ -46,8 +51,8 @@ public class Utils {
             try {
                 FileUtils.copyFileToDirectory(new File(srcFile), new File(destDir));
                 return true;
-            } catch (IOException ioe) {
-                Logger.addLog(ioe);
+            } catch (IOException exception) {
+                logger.showLoggerErrorMessage(exception);
             }
         }
 
@@ -63,7 +68,7 @@ public class Utils {
             if (new File(filename).exists()) {
                 return true;
             } else if (showErrMsg) {
-                Logger.addLog(
+                logger.showLoggerMessage(
                     context.getString(R.string.error_file_not_found) + ": " + filename,
                     LoggerMessageType.ERROR.ordinal()
                 );
@@ -85,8 +90,8 @@ public class Utils {
         try {
             FileUtils.writeStringToFile(new File(filename), text);
             return true;
-        } catch (IOException ioe) {
-            Logger.addLog(ioe);
+        } catch (IOException exception) {
+            logger.showLoggerErrorMessage(exception);
         }
 
         return false;
@@ -111,7 +116,7 @@ public class Utils {
             result = true;
 
         } catch (IOException | InterruptedException exception) {
-            Logger.addLog(exception);
+            logger.showLoggerErrorMessage(exception);
         }
     
         return new ProcessResult(result, output.toString());

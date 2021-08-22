@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.github.helltar.anpaside.R;
 import com.github.helltar.anpaside.Utils;
-import com.github.helltar.anpaside.logging.Logger;
+import com.github.helltar.anpaside.logging.LoggerInterface;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -12,6 +12,7 @@ import java.io.IOException;
 
 public class ProjectManager extends ProjectConfig {
     protected Context context;
+    protected LoggerInterface logger;
     protected Utils utils;
     private String projectPath = "";
     private String projectConfigFilename = "";
@@ -20,10 +21,12 @@ public class ProjectManager extends ProjectConfig {
     
     public ProjectManager(
         Context context,
+        LoggerInterface logger,
         Utils utils
     ) {
         super();
         this.context = context;
+        this.logger = logger;
         this.utils = utils;
     }
     
@@ -36,8 +39,8 @@ public class ProjectManager extends ProjectConfig {
         try {
             save(filename);
             return true;
-        } catch (IOException ioe) {
-            Logger.addLog(ioe);
+        } catch (IOException exception) {
+            logger.showLoggerErrorMessage(exception);
         }
 
         return false;
@@ -82,8 +85,8 @@ public class ProjectManager extends ProjectConfig {
 
             return true;
 
-        } catch (IOException ioe) {
-            Logger.addLog(ioe);
+        } catch (IOException exception) {
+            logger.showLoggerErrorMessage(exception);
         }
 
         return false;

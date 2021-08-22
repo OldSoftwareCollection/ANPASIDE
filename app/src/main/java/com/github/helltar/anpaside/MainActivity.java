@@ -29,8 +29,9 @@ import androidx.core.content.ContextCompat;
 import com.github.helltar.anpaside.editor.CodeEditor;
 import com.github.helltar.anpaside.ide.IdeConfig;
 import com.github.helltar.anpaside.ide.IdeInit;
-import com.github.helltar.anpaside.logging.Logger;
+import com.github.helltar.anpaside.logging.LoggerInterface;
 import com.github.helltar.anpaside.logging.LoggerMessageType;
+import com.github.helltar.anpaside.logging.RoboErrorReporter;
 import com.github.helltar.anpaside.project.ProjectBuilder;
 import com.github.helltar.anpaside.project.ProjectManager;
 
@@ -41,10 +42,12 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends Activity {
-
+public class MainActivity extends Activity implements LoggerInterface {
+    
+    private RoboErrorReporter errorReporter;
     private Utils utils;
     public static CodeEditor codeEditor;
     public static IdeConfig ideConfig;
@@ -64,14 +67,25 @@ public class MainActivity extends Activity {
         TabHost tabHost = findViewById(android.R.id.tabhost);
         tabHost.setup();
 
-        utils = new Utils(this);
+        errorReporter = new RoboErrorReporter(this);
+        errorReporter.bindReporter();
         
-        codeEditor = new CodeEditor(this, tabHost);
+        utils = new Utils(
+            this,
+            this
+        );
+        
+        codeEditor = new CodeEditor(
+            this,
+            this,
+            tabHost
+        );
         codeEditor.setBtnTabCloseName(getString(R.string.pmenu_tab_close));
 
         ideConfig = new IdeConfig(this);
     
         projectManager = new ProjectManager(
+            this,
             this,
             utils
         );
@@ -80,7 +94,10 @@ public class MainActivity extends Activity {
     }
 
     private void init() {
-        Logger.addLog(getString(R.string.app_name) + " " + getAppVersionName());
+        showLoggerMessage(
+            getString(R.string.app_name) + " " + getAppVersionName(),
+            LoggerMessageType.TEXT.ordinal()
+        );
 
         if (!ideConfig.isAssetsInstall()) {
             installAssets();
@@ -109,42 +126,6 @@ public class MainActivity extends Activity {
                     .show();
             }
         }
-    }
-
-    public static void addGuiLog(String msg, int msgType) {
-        if (msg.isEmpty()) {
-            return;
-        }
-
-        String fontColor = "#aaaaaa";
-
-        if (msgType == LoggerMessageType.INFO.ordinal()) {
-            fontColor = "#00aa00";
-        } else if (msgType == LoggerMessageType.ERROR.ordinal()) {
-            fontColor = "#ee0000";
-        }
-
-        String[] msgLines = msg.split("\n");
-        StringBuilder lines = new StringBuilder();
-
-        for (int i = 1; i < msgLines.length; i++) {
-            lines.append("\t\t\t\t\t\t\t\t\t- ").append(msgLines[i]).append("<br>");
-        }
-
-        final Spanned text = Html.fromHtml(new SimpleDateFormat("[HH:mm:ss]: ").format(new Date())
-                                           + "<font color='" + fontColor + "'>"
-                                           + msgLines[0].replace("\n", "<br>") + "</font><br>"
-                                           + lines);
-
-        new Handler(Looper.getMainLooper()).post(() -> {
-            if (tvLog.getText().length() > 1024) {
-                tvLog.setText("");
-            }
-
-            tvLog.append(text);
-            svLog.fullScroll(ScrollView.FOCUS_DOWN);
-            svLog.setVisibility(View.VISIBLE);
-        });
     }
 
     private void showOpenFileDialog() {
@@ -199,8 +180,8 @@ public class MainActivity extends Activity {
                             if (projectManager.createProject(sdcardPath + projDir + "/", projName)) {
                                 openFile(projectManager.getProjectConfigFilename());
                             }
-                        } catch (IOException ioe) {
-                            Logger.addLog(ioe);
+                        } catch (IOException exception) {
+                            showLoggerErrorMessage(exception);
                         }
                     })
                 .setNegativeButton(R.string.dlg_btn_cancel, null)
@@ -232,7 +213,7 @@ public class MainActivity extends Activity {
                                 openFile(filename);
                             }
                         } else {
-                            Logger.addLog(
+                            showLoggerMessage(
                                 getString(R.string.err_del_old_module) + ": " + filename,
                                 LoggerMessageType.ERROR.ordinal()
                             );
@@ -312,8 +293,8 @@ public class MainActivity extends Activity {
                     projectManager.setMidletVendor(edtMidletVendor.getText().toString());
                     projectManager.setVersion(edtMidletVersion.getText().toString());
                     projectManager.save(projectManager.getProjectConfigFilename());
-                } catch (IOException e) {
-                    Logger.addLog(e);
+                } catch (IOException exception) {
+                    showLoggerErrorMessage(exception);
                 }
             })
             .show();
@@ -466,6 +447,7 @@ public class MainActivity extends Activity {
     
                     builder = new ProjectBuilder(
                         MainActivity.this,
+                        MainActivity.this,
                         utils,
                         projectManager.getProjectConfigFilename(),
                         dataLibPath + getString(R.string.mp3cc),
@@ -485,19 +467,67 @@ public class MainActivity extends Activity {
     }
 
     private void installAssets() {
-        Logger.addLog(getString(R.string.msg_install_start));
-        if (
-            new IdeInit(
-                this,
-                MainApp.getContext()
-                    .getAssets()
-            ).install()
-        ) {
+        showLoggerMessage(
+            getString(R.string.msg_install_start),
+            LoggerMessageType.TEXT.ordinal()
+        );
+        if (new IdeInit(
+            this,
+            this,
+            MainActivity.this
+                .getAssets()
+        ).install()) {
             ideConfig.setInstState(true);
-            Logger.addLog(
+            showLoggerMessage(
                 getString(R.string.msg_install_ok),
                 LoggerMessageType.INFO.ordinal()
             );
         }
+    }
+    
+    @Override
+    public void showLoggerErrorMessage(Exception exception) {
+        showLoggerMessage(
+            Objects.requireNonNull(exception.getMessage()),
+            LoggerMessageType.ERROR.ordinal()
+        );
+        errorReporter.reportError(exception);
+    }
+    
+    @Override
+    public void showLoggerMessage(String msg, int msgType) {
+        if (msg.isEmpty()) {
+            return;
+        }
+        
+        String fontColor = "#aaaaaa";
+        
+        if (msgType == LoggerMessageType.INFO.ordinal()) {
+            fontColor = "#00aa00";
+        } else if (msgType == LoggerMessageType.ERROR.ordinal()) {
+            fontColor = "#ee0000";
+        }
+        
+        String[] msgLines = msg.split("\n");
+        StringBuilder lines = new StringBuilder();
+        
+        for (int i = 1; i < msgLines.length; i++) {
+            lines.append("\t\t\t\t\t\t\t\t\t- ").append(msgLines[i]).append("<br>");
+        }
+        
+        final Spanned text = Html.fromHtml(new SimpleDateFormat("[HH:mm:ss]: ").format(new Date())
+            + "<font color='" + fontColor + "'>"
+            + msgLines[0].replace("\n", "<br>") + "</font><br>"
+            + lines);
+        
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (tvLog.getText().length() > 1024) {
+                tvLog.setText("");
+            }
+            
+            tvLog.append(text);
+            svLog.fullScroll(ScrollView.FOCUS_DOWN);
+            svLog.setVisibility(View.VISIBLE);
+        });
     }
 }

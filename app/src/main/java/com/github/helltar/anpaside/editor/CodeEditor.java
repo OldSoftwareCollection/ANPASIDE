@@ -21,15 +21,16 @@ import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import com.github.helltar.anpaside.MainActivity;
 import com.github.helltar.anpaside.R;
-import com.github.helltar.anpaside.logging.Logger;
+import com.github.helltar.anpaside.logging.LoggerInterface;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import org.apache.commons.io.FileUtils;
 
 public class CodeEditor {
-
     private Context context;
+    private LoggerInterface logger;
     private TabHost tabHost;
     public EditorConfig editorConfig;
 
@@ -41,8 +42,13 @@ public class CodeEditor {
     public static boolean isFilesModified = false;
     private LinkedList<String> filenameList = new LinkedList<>();
 
-    public CodeEditor(Context context, TabHost tabHost) {
+    public CodeEditor(
+        Context context,
+        LoggerInterface logger,
+        TabHost tabHost
+    ) {
         this.context = context;
+        this.logger = logger;
         this.tabHost = tabHost;
         editorConfig = new EditorConfig(context);
     }
@@ -57,8 +63,8 @@ public class CodeEditor {
 
         try {
             text = FileUtils.readFileToString(new File(filename));
-        } catch (IOException ioe) {
-            Logger.addLog(ioe);
+        } catch (IOException exception) {
+            logger.showLoggerErrorMessage(exception);
             return false;
         }
 
@@ -201,8 +207,8 @@ public class CodeEditor {
                 }
 
                 return true;
-            } catch (IOException ioe) {
-                Logger.addLog(ioe);
+            } catch (IOException exception) {
+                logger.showLoggerErrorMessage(exception);
             }
         }
 

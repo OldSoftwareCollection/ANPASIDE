@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import com.github.helltar.anpaside.R;
-import com.github.helltar.anpaside.logging.Logger;
+import com.github.helltar.anpaside.logging.LoggerInterface;
 
 import org.apache.commons.io.FileUtils;
 
@@ -13,13 +13,16 @@ import java.io.IOException;
 
 public class IdeInit {
     private Context context;
+    private LoggerInterface logger;
     private AssetManager assetManager;
 
     public IdeInit(
         Context context,
+        LoggerInterface logger,
         AssetManager assetManager
     ) {
         this.context = context;
+        this.logger = logger;
         this.assetManager = assetManager;
     }
 
@@ -59,8 +62,8 @@ public class IdeInit {
 
             return true;
 
-        } catch (IOException ioe) {
-            Logger.addLog(ioe);
+        } catch (IOException exception) {
+            logger.showLoggerErrorMessage(exception);
         }
 
         return false;

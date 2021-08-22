@@ -5,7 +5,7 @@ import android.content.Context;
 import com.github.helltar.anpaside.ProcessResult;
 import com.github.helltar.anpaside.R;
 import com.github.helltar.anpaside.Utils;
-import com.github.helltar.anpaside.logging.Logger;
+import com.github.helltar.anpaside.logging.LoggerInterface;
 import com.github.helltar.anpaside.logging.LoggerMessageType;
 
 import net.lingala.zip4j.core.ZipFile;
@@ -29,6 +29,7 @@ public class ProjectBuilder extends ProjectManager {
 
     public ProjectBuilder(
         Context context,
+        LoggerInterface logger,
         Utils utils,
         String filename,
         String mp3cc,
@@ -37,6 +38,7 @@ public class ProjectBuilder extends ProjectManager {
     ) {
         super(
             context,
+            logger,
             utils
         );
         this.mp3cc = mp3cc;
@@ -107,13 +109,14 @@ public class ProjectBuilder extends ProjectManager {
         String cleanOutput = deleteCharacters(output);
 
         if (!isErr(output)) {
-            Logger.addLog(cleanOutput);
-
-            if (findAndCopyStubs(output) && findAndCopyLib(output)) {
-                return true;
-            }
+            logger.showLoggerMessage(
+                cleanOutput,
+                LoggerMessageType.TEXT.ordinal()
+            );
+    
+            return findAndCopyStubs(output) && findAndCopyLib(output);
         } else {
-            Logger.addLog(
+            logger.showLoggerMessage(
                 cleanOutput,
                 LoggerMessageType.ERROR.ordinal()
             );
@@ -170,7 +173,7 @@ public class ProjectBuilder extends ProjectManager {
                 jarFilename
                 )
             ) {
-                Logger.addLog(
+                logger.showLoggerMessage(
                     context.getString(R.string.message_build_successfully) + "\n"
                         + context.getString(R.string.directory_bin) + getMidletName() + context.getString(R.string.extension_jar)
                         + "\n" + utils.getFileSize(jarFilename) + " KB",
@@ -190,8 +193,8 @@ public class ProjectBuilder extends ProjectManager {
 
         try {
             FileUtils.cleanDirectory(new File(projPrebuildDir));
-        } catch (IOException ioe) {
-            Logger.addLog(ioe);
+        } catch (IOException exception) {
+            logger.showLoggerErrorMessage(exception);
         }
 
         String manifestDir = projPrebuildDir + "META-INF";
@@ -277,9 +280,9 @@ public class ProjectBuilder extends ProjectManager {
             new ZipFile(zipFilename).addFolder(dirPath, param);
             return true;
         } catch (ZipException exception) {
-            Logger.addLog(
-                context.getString(R.string.err_failed_create_archive) + ": " + dirPath + " ("
-                    + exception.getMessage() + ")",
+            logger.showLoggerMessage(
+                context.getString(R.string.err_failed_create_archive) + ": " + dirPath
+                    + " (" + exception.getMessage() + ")",
                 LoggerMessageType.ERROR.ordinal()
             );
         }
