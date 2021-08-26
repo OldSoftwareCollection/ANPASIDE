@@ -96,7 +96,7 @@ public class MainActivity extends Activity implements LoggerInterface {
     private void init() {
         showLoggerMessage(
             getString(R.string.app_name) + " " + getAppVersionName(),
-            LoggerMessageType.TEXT.ordinal()
+            LoggerMessageType.TEXT
         );
 
         if (!ideConfig.isAssetsInstall()) {
@@ -215,7 +215,7 @@ public class MainActivity extends Activity implements LoggerInterface {
                         } else {
                             showLoggerMessage(
                                 getString(R.string.err_del_old_module) + ": " + filename,
-                                LoggerMessageType.ERROR.ordinal()
+                                LoggerMessageType.ERROR
                             );
                         }
                     })
@@ -469,18 +469,17 @@ public class MainActivity extends Activity implements LoggerInterface {
     private void installAssets() {
         showLoggerMessage(
             getString(R.string.msg_install_start),
-            LoggerMessageType.TEXT.ordinal()
+            LoggerMessageType.TEXT
         );
         if (new IdeInit(
             this,
             this,
-            MainActivity.this
-                .getAssets()
+            MainActivity.this.getAssets()
         ).install()) {
             ideConfig.setInstState(true);
             showLoggerMessage(
                 getString(R.string.msg_install_ok),
-                LoggerMessageType.INFO.ordinal()
+                LoggerMessageType.INFO
             );
         }
     }
@@ -489,26 +488,29 @@ public class MainActivity extends Activity implements LoggerInterface {
     public void showLoggerErrorMessage(Exception exception) {
         showLoggerMessage(
             Objects.requireNonNull(exception.getMessage()),
-            LoggerMessageType.ERROR.ordinal()
+            LoggerMessageType.ERROR
         );
         errorReporter.reportError(exception);
     }
     
     @Override
-    public void showLoggerMessage(String msg, int msgType) {
-        if (msg.isEmpty()) {
+    public void showLoggerMessage(
+        String message,
+        LoggerMessageType messageType
+    ) {
+        if (message.isEmpty()) {
             return;
         }
         
         String fontColor = "#aaaaaa";
         
-        if (msgType == LoggerMessageType.INFO.ordinal()) {
+        if (messageType == LoggerMessageType.INFO) {
             fontColor = "#00aa00";
-        } else if (msgType == LoggerMessageType.ERROR.ordinal()) {
+        } else if (messageType == LoggerMessageType.ERROR) {
             fontColor = "#ee0000";
         }
         
-        String[] msgLines = msg.split("\n");
+        String[] msgLines = message.split("\n");
         StringBuilder lines = new StringBuilder();
         
         for (int i = 1; i < msgLines.length; i++) {

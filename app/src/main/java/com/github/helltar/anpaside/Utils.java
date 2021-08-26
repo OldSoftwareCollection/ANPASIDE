@@ -35,7 +35,7 @@ public class Utils {
         } else {
             logger.showLoggerMessage(
                 context.getString(R.string.error_directory_creation) + ": " + dirName,
-                LoggerMessageType.ERROR.ordinal()
+                LoggerMessageType.ERROR
             );
         }
 
@@ -70,7 +70,7 @@ public class Utils {
             } else if (showErrMsg) {
                 logger.showLoggerMessage(
                     context.getString(R.string.error_file_not_found) + ": " + filename,
-                    LoggerMessageType.ERROR.ordinal()
+                    LoggerMessageType.ERROR
                 );
             }
         }

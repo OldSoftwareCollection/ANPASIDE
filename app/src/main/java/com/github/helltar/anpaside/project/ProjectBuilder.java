@@ -111,14 +111,14 @@ public class ProjectBuilder extends ProjectManager {
         if (!isErr(output)) {
             logger.showLoggerMessage(
                 cleanOutput,
-                LoggerMessageType.TEXT.ordinal()
+                LoggerMessageType.TEXT
             );
     
             return findAndCopyStubs(output) && findAndCopyLib(output);
         } else {
             logger.showLoggerMessage(
                 cleanOutput,
-                LoggerMessageType.ERROR.ordinal()
+                LoggerMessageType.ERROR
             );
         }
 
@@ -177,7 +177,7 @@ public class ProjectBuilder extends ProjectManager {
                     context.getString(R.string.message_build_successfully) + "\n"
                         + context.getString(R.string.directory_bin) + getMidletName() + context.getString(R.string.extension_jar)
                         + "\n" + utils.getFileSize(jarFilename) + " KB",
-                    LoggerMessageType.INFO.ordinal()
+                    LoggerMessageType.INFO
                 );
     
                 return true;
@@ -283,7 +283,7 @@ public class ProjectBuilder extends ProjectManager {
             logger.showLoggerMessage(
                 context.getString(R.string.err_failed_create_archive) + ": " + dirPath
                     + " (" + exception.getMessage() + ")",
-                LoggerMessageType.ERROR.ordinal()
+                LoggerMessageType.ERROR
             );
         }
 
