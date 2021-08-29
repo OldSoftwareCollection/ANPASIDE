@@ -21,6 +21,7 @@ import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import com.github.helltar.anpaside.MainActivity;
 import com.github.helltar.anpaside.R;
+import com.github.helltar.anpaside.databinding.ActivityMainBinding;
 import com.github.helltar.anpaside.logging.LoggerInterface;
 
 import java.io.File;
@@ -29,6 +30,7 @@ import java.util.LinkedList;
 import org.apache.commons.io.FileUtils;
 
 public class CodeEditor {
+    private ActivityMainBinding binding;
     private Context context;
     private LoggerInterface logger;
     private TabHost tabHost;
@@ -43,10 +45,12 @@ public class CodeEditor {
     private LinkedList<String> filenameList = new LinkedList<>();
 
     public CodeEditor(
+        ActivityMainBinding binding,
         Context context,
         LoggerInterface logger,
         TabHost tabHost
     ) {
+        this.binding = binding;
         this.context = context;
         this.logger = logger;
         this.tabHost = tabHost;
@@ -107,7 +111,7 @@ public class CodeEditor {
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            MainActivity.svLog.setVisibility(View.GONE);
+            binding.loggerScrollView.setVisibility(View.GONE);
         }
 
         @Override

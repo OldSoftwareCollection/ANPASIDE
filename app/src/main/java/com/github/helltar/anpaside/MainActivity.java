@@ -20,12 +20,12 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TabHost;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.github.helltar.anpaside.databinding.ActivityMainBinding;
 import com.github.helltar.anpaside.editor.CodeEditor;
 import com.github.helltar.anpaside.ide.IdeConfig;
 import com.github.helltar.anpaside.ide.IdeInit;
@@ -47,22 +47,20 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity implements LoggerInterface {
     
+    private ActivityMainBinding binding;
+    
     private RoboErrorReporter errorReporter;
     private Utils utils;
     public static CodeEditor codeEditor;
     public static IdeConfig ideConfig;
     private ProjectManager projectManager;
 
-    private static TextView tvLog;
-    public static ScrollView svLog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        tvLog = findViewById(R.id.logger_text_view);
-        svLog = findViewById(R.id.logger_scroll_view);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         TabHost tabHost = findViewById(android.R.id.tabhost);
         tabHost.setup();
@@ -76,6 +74,7 @@ public class MainActivity extends Activity implements LoggerInterface {
         );
         
         codeEditor = new CodeEditor(
+            binding,
             this,
             this,
             tabHost
@@ -523,13 +522,13 @@ public class MainActivity extends Activity implements LoggerInterface {
             + lines);
         
         new Handler(Looper.getMainLooper()).post(() -> {
-            if (tvLog.getText().length() > 1024) {
-                tvLog.setText("");
+            if (binding.loggerTextView.getText().length() > 1024) {
+                binding.loggerTextView.setText("");
             }
             
-            tvLog.append(text);
-            svLog.fullScroll(ScrollView.FOCUS_DOWN);
-            svLog.setVisibility(View.VISIBLE);
+            binding.loggerTextView.append(text);
+            binding.loggerScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            binding.loggerScrollView.setVisibility(View.VISIBLE);
         });
     }
 }
