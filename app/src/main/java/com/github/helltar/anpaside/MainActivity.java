@@ -61,8 +61,8 @@ public class MainActivity extends Activity implements LoggerInterface {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tvLog = findViewById(R.id.tvLog);
-        svLog = findViewById(R.id.svLog);
+        tvLog = findViewById(R.id.logger_text_view);
+        svLog = findViewById(R.id.logger_scroll_view);
 
         TabHost tabHost = findViewById(android.R.id.tabhost);
         tabHost.setup();
