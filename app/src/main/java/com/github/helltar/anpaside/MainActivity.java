@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.github.helltar.anpaside.databinding.ActivityMainBinding;
+import com.github.helltar.anpaside.databinding.DialogNewProjectBinding;
 import com.github.helltar.anpaside.editor.CodeEditor;
 import com.github.helltar.anpaside.ide.IdeConfig;
 import com.github.helltar.anpaside.ide.IdeInit;
@@ -231,10 +233,8 @@ public class MainActivity extends Activity implements LoggerInterface {
                 codeEditor.editorConfig.setLastProject(filename);
                 filename = projectManager.getMainModuleFilename();
             }
-
-            if (codeEditor.openFile(filename)) {
-                return true;
-            }
+    
+            return codeEditor.openFile(filename);
         }
 
         return false;
@@ -253,21 +253,31 @@ public class MainActivity extends Activity implements LoggerInterface {
     }
 
     private void showNewProjectDialog() {
-        View view = getViewById(R.layout.dialog_new_project);
+        DialogNewProjectBinding binding = DialogNewProjectBinding.inflate(
+            LayoutInflater.from(MainActivity.this)
+        );
 
-        final EditText edtProjectsDir = view.findViewById(R.id.edtProjectsDir);
-        final EditText edtProjectName = view.findViewById(R.id.edtProjectName);
-
-        edtProjectsDir.setText(
+        binding.setupProjectsDirectory.setText(
             getString(R.string.directory_main)
         );
 
         new AlertDialog.Builder(this)
             .setTitle(R.string.dlg_title_new_project)
-            .setView(view)
-            .setNegativeButton(R.string.dlg_btn_cancel, null)
-            .setPositiveButton(R.string.dlg_btn_create, (dialog, whichButton) ->
-                createProject(edtProjectsDir.getText().toString(), edtProjectName.getText().toString()))
+            .setView(binding.getRoot())
+            .setNegativeButton(
+                R.string.dlg_btn_cancel,
+                null
+            )
+            .setPositiveButton(
+                R.string.dlg_btn_create,
+                (dialog, whichButton) ->
+                    createProject(
+                        binding.setupProjectsDirectory.getText()
+                            .toString(),
+                        binding.setupProjectName.getText()
+                            .toString()
+                    )
+            )
             .show();
     }
 

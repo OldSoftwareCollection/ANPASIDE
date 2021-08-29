@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+	android:padding="28dp"
 	android:orientation="vertical"
-	android:padding="28dp">
-
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
 	<EditText
-		android:id="@+id/edtProjectsDir"
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
+		android:id="@+id/setup_projects_directory"
 		android:hint="@string/dlg.hint.projects_dir_name"
-		android:minHeight="48dp"/>
-
-	<EditText
-		android:id="@+id/edtProjectName"
-		android:layout_height="wrap_content"
+		android:minHeight="48dp"
 		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
+	<EditText
+		android:id="@+id/setup_project_name"
 		android:hint="@string/dlg.hint.project_name"
-		android:minHeight="48dp"/>
-
+		android:minHeight="48dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
 </LinearLayout>
 
