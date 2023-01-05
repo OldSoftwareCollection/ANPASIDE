@@ -1,9 +1,9 @@
 buildscript {
     ext {
         // Android Gradle plugin
-        androidGradlePluginVersion = '7.0.1'
+        androidGradlePluginVersion = '7.0.3'
         // Kotlin
-        kotlinVersion = '1.5.30'
+        kotlinVersion = '1.5.31'
     }
     dependencies {
         // Android Gradle plugin
